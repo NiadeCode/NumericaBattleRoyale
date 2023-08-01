@@ -11,9 +11,12 @@ import es.niadecode.numericabattleroyale.ui.state.BattleState
 import java.awt.Point
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.random.Random
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class BattleSceneViewModel() : ViewModel() {
 
@@ -35,18 +38,24 @@ class BattleSceneViewModel() : ViewModel() {
         println("start game")
         _soldiers.value = emptyList()
 
-        val spawPoits = getSpawnPoints(
-            points = battleParticipations.size,
-            radius = radius,
-            center = center
-        )
+        viewModelScope.launch {
+            val spawPoits = getSpawnPoints(
+                points = battleParticipations.size,
+                radius = radius,
+                center = center
+            )
 
-        _soldiers.value = battleParticipations.mapIndexed { index, battleParticipation ->
-            val spawnPoint = spawPoits[index]
-            //TODO test
-            SoldierData(spawnPoint, battleParticipation.name, battleParticipation.color, 5)
+            val newSoldiers = mutableListOf<SoldierData>()
+            battleParticipations.forEachIndexed { index, battleParticipation ->
+                val spawnPoint = spawPoits[index]
+                //TODO test
+                for (n in 0..(1..10).random()) {
+                    newSoldiers.add(SoldierData(spawnPoint, battleParticipation.name, battleParticipation.color, 5))
+                }
+            }
+            _soldiers.value = newSoldiers
+
         }
-
 
         //ship.position = Vector2(width.value / 2.0, height.value / 2.0)
         //ship.movementVector = Vector2.ZERO
@@ -63,33 +72,35 @@ class BattleSceneViewModel() : ViewModel() {
     fun update() {
         println("update")
 
-        _soldiers.value = _soldiers.value.map { currentSoldier ->
-            val enemies = soldiers.value
-                .filter { it.isEnemy(currentSoldier) }
-                .sortedBy { it.point.distanceSq(currentSoldier.point) }
-            enemies.firstOrNull()?.let {
-                currentSoldier.update(it)
-            } ?: run { currentSoldier }
-        }
-
-        val tmpSoldiers = soldiers.value.toMutableList()
-        soldiers.value.forEach { currentSoldier ->
-            if (tmpSoldiers.isNotEmpty() && tmpSoldiers.contains(currentSoldier)) {
-                val leash = soldiers.value
+        viewModelScope.launch {
+            _soldiers.value = _soldiers.value.map { currentSoldier ->
+                val enemies = soldiers.value
                     .filter { it.isEnemy(currentSoldier) }
-                    .firstOrNull { it.overlapsWith(currentSoldier) }
-                leash?.let {
-                    tmpSoldiers.remove(it)
+                    .sortedBy { it.point.distanceSq(currentSoldier.point) }
+                enemies.firstOrNull()?.let {
+                    currentSoldier.update(it)
+                } ?: run { currentSoldier }
+            }
+
+            val tmpSoldiers = soldiers.value.shuffled().toMutableList()
+            soldiers.value.forEach { currentSoldier ->
+                if (tmpSoldiers.isNotEmpty() && tmpSoldiers.contains(currentSoldier)) {
+                    val leash = soldiers.value
+                        .filter { it.isEnemy(currentSoldier) }
+                        .firstOrNull { it.overlapsWith(currentSoldier) }
+                    leash?.let {
+                        tmpSoldiers.remove(it)
+                    }
                 }
             }
+            _soldiers.value = tmpSoldiers
+
+
+            // Win condition
+            //if (asteroids.isEmpty()) {
+            //    winGame()
+            //}
         }
-        _soldiers.value = tmpSoldiers
-
-
-        // Win condition
-        //if (asteroids.isEmpty()) {
-        //    winGame()
-        //}
     }
 
     fun endGame() {
