@@ -60,29 +60,27 @@ class BattleSceneViewModel() : ViewModel() {
         gameStatus = "Good luck!"
     }
 
-    fun update(time: Long) {
+    fun update() {
         println("update")
-        val delta = time - prevTime
-        val floatDelta = (delta / 1E8).toFloat()
-        prevTime = time
 
         _soldiers.value = _soldiers.value.map { currentSoldier ->
-
             val enemies = soldiers.value
-                .filter { it.name != currentSoldier.name }
+                .filter { it.isEnemy(currentSoldier) }
                 .sortedBy { it.point.distanceSq(currentSoldier.point) }
-            val nearestEnemy = enemies.first()
-
-            currentSoldier.update(nearestEnemy)
+            enemies.firstOrNull()?.let {
+                currentSoldier.update(it)
+            } ?: run { currentSoldier }
         }
 
         val tmpSoldiers = soldiers.value.toMutableList()
         soldiers.value.forEach { currentSoldier ->
-            val leash = soldiers.value
-                .filter { it.name != currentSoldier.name }
-                .firstOrNull { it.overlapsWith(currentSoldier) }
-            leash?.let {
-                tmpSoldiers.remove(it)
+            if (tmpSoldiers.isNotEmpty() && tmpSoldiers.contains(currentSoldier)) {
+                val leash = soldiers.value
+                    .filter { it.isEnemy(currentSoldier) }
+                    .firstOrNull { it.overlapsWith(currentSoldier) }
+                leash?.let {
+                    tmpSoldiers.remove(it)
+                }
             }
         }
         _soldiers.value = tmpSoldiers

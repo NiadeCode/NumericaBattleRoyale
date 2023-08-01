@@ -21,6 +21,8 @@ import es.niadecode.numericabattleroyale.ui.composable.Soldier
 import es.niadecode.numericabattleroyale.ui.state.BattleState
 import es.niadecode.numericabattleroyale.ui.viewmodel.BattleSceneViewModel
 import java.awt.Point
+import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.delay
 import moe.tlaster.precompose.viewmodel.viewModel
 
 @Composable
@@ -54,9 +56,8 @@ fun BattleScene(
 
         LaunchedEffect(Unit) {
             while (true) {
-                withFrameNanos {
-                    viewModel.update(it)
-                }
+                    viewModel.update()
+                    delay(16.milliseconds)
             }
         }
 

@@ -29,6 +29,10 @@ data class SoldierData(
         return distance < (this.size)
     }
 
+    fun isEnemy(other: SoldierData): Boolean {
+        return this.name != other.name
+    }
+
     private fun updateMovement(objective: SoldierData): Pair<Int, Int> {
         val newX = if (point.x > objective.point.x) {
             point.x - 1

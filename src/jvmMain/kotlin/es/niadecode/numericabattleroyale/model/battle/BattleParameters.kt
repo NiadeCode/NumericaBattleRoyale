@@ -14,6 +14,6 @@ fun getMockParticipationList(): List<BattleParticipation> {
         BattleParticipation("RothioTome4", Color.Cyan, 10),
         BattleParticipation("RothioTome5", Color.Green, 10),
         BattleParticipation("RothioTome6", Color.Yellow, 10),
-        BattleParticipation("RothioTome7", Color.Red, 10),
+       BattleParticipation("RothioTome7", Color.Red, 10),
     )
 }
