@@ -11,7 +11,6 @@ import es.niadecode.numericabattleroyale.ui.state.BattleState
 import java.awt.Point
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.random.Random
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -39,7 +38,7 @@ class BattleSceneViewModel() : ViewModel() {
         _soldiers.value = emptyList()
 
         viewModelScope.launch {
-            val spawPoits = getSpawnPoints(
+            val spawnPoints = getSpawnPoints(
                 points = battleParticipations.size,
                 radius = radius,
                 center = center
@@ -47,10 +46,21 @@ class BattleSceneViewModel() : ViewModel() {
 
             val newSoldiers = mutableListOf<SoldierData>()
             battleParticipations.forEachIndexed { index, battleParticipation ->
-                val spawnPoint = spawPoits[index]
-                //TODO test
-                for (n in 0..(1..10).random()) {
-                    newSoldiers.add(SoldierData(spawnPoint, battleParticipation.name, battleParticipation.color, 5))
+                val soldierSpawnPoint = getSpawnPoints(
+                    points = battleParticipation.soldiers,
+                    radius = (battleParticipation.soldiers / 2).toDouble(),
+                    center = spawnPoints[index]
+                )
+
+                soldierSpawnPoint.forEach { point: Point ->
+                    newSoldiers.add(
+                        SoldierData(
+                            point = point,
+                            name = battleParticipation.name,
+                            color = battleParticipation.color,
+                            size = 5
+                        )
+                    )
                 }
             }
             _soldiers.value = newSoldiers

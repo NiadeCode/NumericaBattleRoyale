@@ -9,12 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
 import es.niadecode.numericabattleroyale.model.battle.getMockParticipationList
 import es.niadecode.numericabattleroyale.ui.composable.Soldier
@@ -35,18 +32,9 @@ fun BattleScene(
         BattleSceneViewModel()
     }
 
-    var with: Int = 0
-    var height: Int = 0
-    val density = LocalDensity.current
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .onSizeChanged {
-                with(density) {
-                    with = it.width / 2
-                    height = it.height / 2
-                }
-            },
+            .fillMaxSize(),
     ) {
 //    val state by viewModel.state.collectAsState()
 
@@ -56,8 +44,8 @@ fun BattleScene(
 
         LaunchedEffect(Unit) {
             while (true) {
-                    viewModel.update()
-                    delay(16.milliseconds)
+                viewModel.update()
+                delay(50.milliseconds)
             }
         }
 
