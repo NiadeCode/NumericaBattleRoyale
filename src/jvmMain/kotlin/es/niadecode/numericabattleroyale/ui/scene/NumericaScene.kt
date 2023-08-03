@@ -1,17 +1,14 @@
 package es.niadecode.numericabattleroyale.ui.scene
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import es.niadecode.numericabattleroyale.model.numerica.GameState
 import es.niadecode.numericabattleroyale.ui.viewmodel.NumericaSceneViewModel
 import kotlinx.coroutines.async
@@ -32,17 +29,42 @@ fun NumericaScene(navigatorCallback: (String) -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text("HIGH SCORE ${state.maxScore}\n${state.lastUserNameMVP}")
+        Text(
+            text = "HIGH SCORE ${state.maxScore}\n${state.lastUserNameMVP}",
+            style = MaterialTheme.typography.h1,
+            color = MaterialTheme.colors.onPrimary
+        )
 
-        Text(state.currentScore.toString())
 
+        Card(
+            modifier = Modifier
+                .padding(30.dp)
+                .size(100.dp),
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    style = MaterialTheme.typography.h2,
+                    text = state.currentScore.toString(),
+                    color = MaterialTheme.colors.primary
+                )
+            }
+        }
+
+        Text(
+            text = state.lastUserName,
+            style = MaterialTheme.typography.h1,
+            color = MaterialTheme.colors.onPrimary,
+        )
+
+        Spacer(modifier = Modifier.size(24.dp))
 
         if (state is GameState.GameOver) {
             val toBattleText = remember { mutableStateOf("") }
             LaunchedEffect(null) {
                 var i = 3
                 val counter = async {
-                    while (i!=0) {
+                    while (i != 0) {
                         toBattleText.value = "Going to battle in $i"
                         delay(1000)
                         i--
@@ -51,14 +73,13 @@ fun NumericaScene(navigatorCallback: (String) -> Unit) {
                 counter.await()
                 navigatorCallback("/battle")
             }
-            Text(toBattleText.value)
+            Text(toBattleText.value, color = MaterialTheme.colors.onPrimary)
         }
 
 
-        Button({viewModel.toBattleMock()}) {
+        Button({ viewModel.toBattleMock() }) {
             Text("to battle mock")
         }
-
 
 
     }

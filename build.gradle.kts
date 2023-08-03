@@ -23,6 +23,7 @@ kotlin {
     sourceSets {
         val jvmMain by getting {
             dependencies {
+                implementation(compose.desktop.common)
                 implementation(compose.desktop.currentOs)
                 api(compose.runtime)
                 api(compose.foundation)

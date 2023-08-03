@@ -6,7 +6,8 @@ sealed class GameState(
     open val lastUserName: String,
     open val lastUserNameMVP: String
 ) {
-    object Start : GameState(0,0,"","")
+
+    object Start : GameState(0, 0, "", "")
     data class Play(
         override val currentScore: Int,
         override val maxScore: Int,
@@ -38,6 +39,6 @@ fun GameState.mapToBo(): GameStateBo {
     }
 }
 
-fun GameStateBo.mapToVo() : GameState {
+fun GameStateBo.mapToVo(): GameState {
     return GameState.Play(currentScore, maxScore, lastUserName, lastUserNameMVP)
 }

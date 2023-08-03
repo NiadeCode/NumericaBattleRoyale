@@ -2,15 +2,22 @@ package es.niadecode.numericabattleroyale.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+//val Purple200 = Color(0xFFBB86FC)
+//val Purple500 = Color(0xFF6200EE)
+//val Purple700 = Color(0xFF3700B3)
+//val Teal200 = Color(0xFF03DAC5)
+//
+//val Platinum = Color(0xFFDCE0D9)
+//val DarkPurple = Color(0xFF31091F)
+//val Rosewood = Color(0xFF6B0F1A)
+//val DavyGray = Color(0xFF595959)
+//val BattleshipGray = Color(0xFF808F85)
 
-val Blue500 = Color(0xFF00A8E8)
-val DarkBlue900 = Color(0xFF1D2F6F)
-val Red300 = Color(0xFFF45B69)
-val DarkRed900 = Color(0xFF860914)
+val Claret = Color(0xFF730030)
+val Amaranth = Color(0xFFA80047)
+val Raspberry = Color(0xFFDC005D)
+val Mustard = Color(0xFFFEE24E)
+val Aquamarine = Color(0xFF00EAC0)
 
 /*
 primary = Blue500,
@@ -25,12 +32,5 @@ onSecondary = Color.Black,
 onBackground = Color.Black,
 onSurface = Color.Black,
 */
-val primary = Blue500
-val primaryVariant = DarkBlue900
-
-val secondary = Red300
-val secondaryVariant = DarkRed900
-
-val accent = Color(0xFF1DD3B0)
 
 
