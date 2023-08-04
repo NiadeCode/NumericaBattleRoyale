@@ -9,6 +9,7 @@ data class SoldierData(
     val color: Color,
     val size: Int,
     val chunk: Point,
+    val model: Int = (1..3).random()
 ) {
 
     fun update(objective: SoldierData): SoldierData {

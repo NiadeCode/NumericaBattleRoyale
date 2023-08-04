@@ -26,7 +26,11 @@ fun Soldier(soldierData: SoldierData) {
             .offset(soldierData.point.x.dp, soldierData.point.y.dp)
             .size(soldierData.size.dp)
     ) {
-        Image(painter = painterResource("vectors/robot_1.svg"), null, colorFilter = ColorFilter.tint(soldierData.color))
+        Image(
+            painter = painterResource("vectors/robot_${soldierData.model}.svg"),
+            null,
+            colorFilter = ColorFilter.tint(soldierData.color)
+        )
 //        Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
 //            drawPath(
 //                color = soldierData.color,
