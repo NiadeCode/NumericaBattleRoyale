@@ -56,7 +56,7 @@ class BattleSceneViewModel() : ViewModel() {
                             point = point,
                             name = battleParticipation.name,
                             color = battleParticipation.color,
-                            size = 5,
+                            size = 10,
                             chunk = Point(point.x % CHUNK_SIZE, point.y % CHUNK_SIZE),
                         )
                     )

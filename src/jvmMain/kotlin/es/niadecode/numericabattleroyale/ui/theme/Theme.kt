@@ -4,9 +4,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 
-private val LightColorPalette = lightColors(
+private val originalNumericaColors = lightColors(
     primary = Raspberry,
     primaryVariant = Amaranth,
     secondary = Aquamarine,
@@ -26,6 +27,18 @@ private val LightColorPalette = lightColors(
     */
 )
 
+private val greenPalete = lightColors(
+    primary = Skobeloff,
+    primaryVariant = RichBlack,
+    secondary = Viridian,
+    surface = Viridian,
+    background = Linen,
+    onPrimary = MintCream,
+    onBackground = RichBlack,
+    onSecondary = Viridian,
+    onSurface = MintCream,
+)
+
 @Composable
 fun BattleRoyaleTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -36,7 +49,7 @@ fun BattleRoyaleTheme(
 //        if (darkTheme) {
 //        DarkColorPalette
 //    } else {
-        LightColorPalette
+        greenPalete
 //    }
 
 

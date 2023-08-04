@@ -19,6 +19,15 @@ val Raspberry = Color(0xFFDC005D)
 val Mustard = Color(0xFFFEE24E)
 val Aquamarine = Color(0xFF00EAC0)
 
+
+val RichBlack = Color(0xFF071E22)
+val Skobeloff = Color(0xFF1D7874)
+val Viridian = Color(0xFF679289)
+val Linen = Color(0xFFF9EBE0)
+val MintCream = Color(0xFFF4FFF8)
+
+
+
 /*
 primary = Blue500,
 primaryVariant = DarkBlue900,

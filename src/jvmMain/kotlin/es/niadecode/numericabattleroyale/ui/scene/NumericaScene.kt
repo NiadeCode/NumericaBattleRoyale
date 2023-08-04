@@ -32,7 +32,7 @@ fun NumericaScene(navigatorCallback: (String) -> Unit) {
         Text(
             text = "HIGH SCORE ${state.maxScore}\n${state.lastUserNameMVP}",
             style = MaterialTheme.typography.h1,
-            color = MaterialTheme.colors.onPrimary
+            color = MaterialTheme.colors.onBackground
         )
 
 
@@ -46,7 +46,7 @@ fun NumericaScene(navigatorCallback: (String) -> Unit) {
                     modifier = Modifier.align(Alignment.Center),
                     style = MaterialTheme.typography.h2,
                     text = state.currentScore.toString(),
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colors.onSurface
                 )
             }
         }
@@ -54,7 +54,7 @@ fun NumericaScene(navigatorCallback: (String) -> Unit) {
         Text(
             text = state.lastUserName,
             style = MaterialTheme.typography.h1,
-            color = MaterialTheme.colors.onPrimary,
+            color = MaterialTheme.colors.onBackground,
         )
 
         Spacer(modifier = Modifier.size(24.dp))
@@ -73,7 +73,7 @@ fun NumericaScene(navigatorCallback: (String) -> Unit) {
                 counter.await()
                 navigatorCallback("/battle")
             }
-            Text(toBattleText.value, color = MaterialTheme.colors.onPrimary)
+            Text(toBattleText.value, color = MaterialTheme.colors.onBackground)
         }
 
 
