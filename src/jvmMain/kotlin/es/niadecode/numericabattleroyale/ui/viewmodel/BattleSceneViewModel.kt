@@ -8,20 +8,18 @@ import androidx.compose.ui.unit.DpOffset
 import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
 import es.niadecode.numericabattleroyale.model.battle.SoldierData
 import es.niadecode.numericabattleroyale.ui.state.BattleState
-import java.awt.Point
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import java.awt.Point
+import kotlin.math.cos
+import kotlin.math.sin
+
+const val CHUNK_SIZE = 20
 
 class BattleSceneViewModel() : ViewModel() {
-
-    var prevTime = 0L
-
-    var targetLocation: DpOffset by mutableStateOf(DpOffset.Zero)
 
     private val _soldiers by lazy {
         MutableStateFlow<List<SoldierData>>(emptyList())
@@ -48,7 +46,7 @@ class BattleSceneViewModel() : ViewModel() {
             battleParticipations.forEachIndexed { index, battleParticipation ->
                 val soldierSpawnPoint = getSpawnPoints(
                     points = battleParticipation.soldiers,
-                    radius = (battleParticipation.soldiers / 2).toDouble(),
+                    radius = battleParticipation.soldiers.toDouble(),
                     center = spawnPoints[index]
                 )
 
@@ -58,7 +56,8 @@ class BattleSceneViewModel() : ViewModel() {
                             point = point,
                             name = battleParticipation.name,
                             color = battleParticipation.color,
-                            size = 5
+                            size = 5,
+                            chunk = Point(point.x % CHUNK_SIZE, point.y % CHUNK_SIZE),
                         )
                     )
                 }
@@ -84,7 +83,12 @@ class BattleSceneViewModel() : ViewModel() {
 
         viewModelScope.launch {
             _soldiers.value = _soldiers.value.map { currentSoldier ->
+
+                val enemyChunk = getChunkedEnemis(currentSoldier).map { it.chunk }
+
+
                 val enemies = soldiers.value
+                    .filter { it.chunk in enemyChunk }
                     .filter { it.isEnemy(currentSoldier) }
                     .sortedBy { it.point.distanceSq(currentSoldier.point) }
                 enemies.firstOrNull()?.let {
@@ -107,10 +111,21 @@ class BattleSceneViewModel() : ViewModel() {
 
 
             // Win condition
-            //if (asteroids.isEmpty()) {
+            //if (soldiers.isEmpty()) {
             //    winGame()
             //}
         }
+    }
+
+    private fun getChunkedEnemis(currentSoldier: SoldierData): List<SoldierData> {
+        val enemies = soldiers.value
+            .filter { it.isEnemy(currentSoldier) }
+            .distinctBy { it.chunk }
+            .sortedBy { it.chunk.distanceSq(currentSoldier.chunk) }
+            .take(4)
+
+
+        return enemies
     }
 
     fun endGame() {

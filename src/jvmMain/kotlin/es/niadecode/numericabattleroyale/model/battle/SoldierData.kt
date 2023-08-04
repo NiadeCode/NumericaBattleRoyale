@@ -8,6 +8,7 @@ data class SoldierData(
     val name: String,
     val color: Color,
     val size: Int,
+    val chunk: Point,
 ) {
 
     fun update(objective: SoldierData): SoldierData {

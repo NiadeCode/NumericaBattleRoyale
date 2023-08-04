@@ -23,7 +23,6 @@ kotlin {
     sourceSets {
         val jvmMain by getting {
             dependencies {
-                implementation(compose.desktop.common)
                 implementation(compose.desktop.currentOs)
                 api(compose.runtime)
                 api(compose.foundation)
@@ -47,7 +46,7 @@ compose.desktop {
     application {
         mainClass = "MainKt"
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Exe)
             packageName = "NumericaBattleRoyale"
             packageVersion = "1.0.0"
         }
