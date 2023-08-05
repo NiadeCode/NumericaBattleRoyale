@@ -45,7 +45,7 @@ fun BattleScene(
         LaunchedEffect(Unit) {
             while (true) {
                 viewModel.update()
-                delay(50.milliseconds)
+                delay(100.milliseconds)
             }
         }
 

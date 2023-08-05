@@ -1,6 +1,7 @@
 package es.niadecode.numericabattleroyale.model.battle
 
 import androidx.compose.ui.graphics.Color
+import es.niadecode.numericabattleroyale.ui.viewmodel.CHUNK_SIZE
 import java.awt.Point
 
 data class SoldierData(
@@ -20,12 +21,15 @@ data class SoldierData(
         println("oldY = ${point.y}, enemy Y = ${objective.point.y}")
         println("newY = ${newY}")
 
-        return this.copy(point = Point(newX, newY))
+        return this.copy(
+            point = Point(newX, newY),
+            chunk = Point(point.x % CHUNK_SIZE, point.y % CHUNK_SIZE)
+        )
     }
 
     fun overlapsWith(other: SoldierData): Boolean {
         // Overlap means the center of the game objects are closer together than the sum of their radiuses
-        val distance =  this.point.distance(other.point)
+        val distance = this.point.distance(other.point)
 
         println("$this is distant $distance from $other")
         return distance < (this.size)
