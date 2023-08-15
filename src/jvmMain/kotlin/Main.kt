@@ -55,7 +55,7 @@ private fun DraggableBar(
         ) {
             Text(
                 text = "Numerica Battle Royale",
-                style = MaterialTheme.typography.h1,
+                style = MaterialTheme.typography.h3,
                 color = MaterialTheme.colors.onPrimary
             )
         }

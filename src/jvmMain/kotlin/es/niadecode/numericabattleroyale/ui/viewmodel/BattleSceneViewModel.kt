@@ -47,7 +47,7 @@ class BattleSceneViewModel() : ViewModel() {
             battleParticipations.forEachIndexed { index, battleParticipation ->
                 val soldierSpawnPoint = getSpawnPoints(
                     points = battleParticipation.soldiers,
-                    radius = battleParticipation.soldiers.toDouble()*2,
+                    radius = battleParticipation.soldiers.toDouble()*4,
                     center = spawnPoints[index]
                 )
 
@@ -57,7 +57,7 @@ class BattleSceneViewModel() : ViewModel() {
                             point = point,
                             name = battleParticipation.name,
                             color = battleParticipation.color,
-                            size = 10,
+                            size = 20,
                             chunk = Point(point.x % CHUNK_SIZE, point.y % CHUNK_SIZE),
                         )
                     )

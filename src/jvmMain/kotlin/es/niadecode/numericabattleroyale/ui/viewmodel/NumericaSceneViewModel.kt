@@ -4,7 +4,7 @@ import es.niadecode.numericabattleroyale.model.numerica.GameParticipation
 import es.niadecode.numericabattleroyale.model.numerica.GameState
 import es.niadecode.numericabattleroyale.model.numerica.mapToBo
 import es.niadecode.numericabattleroyale.model.numerica.mapToVo
-import es.niadecode.numericabattleroyale.repository.TwitchRepository
+import es.niadecode.numericabattleroyale.repository.TwitchChatRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class NumericaSceneViewModel : ViewModel() {
 
-    private val repository by lazy { TwitchRepository(viewModelScope) }
+    private val chatRepository by lazy { TwitchChatRepository(viewModelScope) }
 
     private val _state by lazy {
         MutableStateFlow<GameState>(GameState.Start)
@@ -23,7 +23,7 @@ class NumericaSceneViewModel : ViewModel() {
     val state: StateFlow<GameState> = _state
 
     override fun onCleared() {
-        repository.close()
+        chatRepository.close()
         super.onCleared()
     }
 
@@ -35,7 +35,7 @@ class NumericaSceneViewModel : ViewModel() {
 
         println("init viewmodel")
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            repository.participationFlow
+            chatRepository.participationFlow
                 .collect {
                     onParticipationReceived(it)
                 }

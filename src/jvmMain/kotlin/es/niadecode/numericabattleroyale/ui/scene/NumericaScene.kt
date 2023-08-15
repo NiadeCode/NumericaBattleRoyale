@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import es.niadecode.numericabattleroyale.model.numerica.GameState
 import es.niadecode.numericabattleroyale.ui.viewmodel.NumericaSceneViewModel
@@ -30,16 +31,29 @@ fun NumericaScene(navigatorCallback: (String) -> Unit) {
     ) {
 
         Text(
-            text = "HIGH SCORE ${state.maxScore}\n${state.lastUserNameMVP}",
+            text = "HIGH SCORE ${state.maxScore}",
             style = MaterialTheme.typography.h1,
             color = MaterialTheme.colors.onBackground
         )
-
+        Row {
+            if (state.lastUserNameMVP.isNotEmpty()) {
+                Text(
+                    text = "by ",
+                    style = MaterialTheme.typography.h1,
+                    color = MaterialTheme.colors.onBackground
+                )
+                Text(
+                    text = state.lastUserNameMVP,
+                    style = MaterialTheme.typography.h1,
+                    color = MaterialTheme.colors.primary
+                )
+            }
+        }
 
         Card(
             modifier = Modifier
                 .padding(30.dp)
-                .size(100.dp),
+                .size(300.dp),
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 Text(
@@ -76,11 +90,13 @@ fun NumericaScene(navigatorCallback: (String) -> Unit) {
             Text(toBattleText.value, color = MaterialTheme.colors.onBackground)
         }
 
-
-        Button({ viewModel.toBattleMock() }) {
+        Button(
+            modifier = Modifier.alpha(0.5f),
+            onClick = {
+                viewModel.toBattleMock()
+            }) {
             Text("to battle mock")
         }
-
 
     }
 

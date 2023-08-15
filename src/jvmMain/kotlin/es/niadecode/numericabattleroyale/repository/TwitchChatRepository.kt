@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
-class TwitchRepository(
+class TwitchChatRepository(
     private val externalScope: CoroutineScope,
 ) {
 

@@ -39,13 +39,13 @@ fun BattleScene(
 //    val state by viewModel.state.collectAsState()
 
         if (viewModel.gameState == BattleState.START) {
-            viewModel.startGame(participations, Point(256, 256), 80.0)
+            viewModel.startGame(participations, Point(256, 256), 180.0)
         }
 
         LaunchedEffect(Unit) {
             while (true) {
                 viewModel.update()
-                delay(100.milliseconds)
+                delay(300.milliseconds)
             }
         }
 

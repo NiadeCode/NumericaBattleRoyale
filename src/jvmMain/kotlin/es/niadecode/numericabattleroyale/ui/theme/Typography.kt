@@ -21,13 +21,19 @@ val Typography = Typography(
     h1 = TextStyle(
         fontFamily = piedra,
         fontWeight = FontWeight.Black,
-        fontSize = 24.sp,
+        fontSize = 40.sp,
         letterSpacing = 1.sp,
     ),
     h2 = TextStyle(
         fontFamily = piedra,
         fontWeight = FontWeight.Bold,
-        fontSize = 22.sp,
+        fontSize = 150.sp,
+        letterSpacing = 1.sp,
+        ),
+    h3 = TextStyle(
+        fontFamily = piedra,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
     ),
     body1 = TextStyle(
         fontFamily = piedra,
