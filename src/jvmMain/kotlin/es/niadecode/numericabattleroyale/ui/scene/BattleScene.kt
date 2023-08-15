@@ -24,7 +24,7 @@ import moe.tlaster.precompose.viewmodel.viewModel
 
 @Composable
 fun BattleScene(
-    participations: List<BattleParticipation> = getMockParticipationList(),
+    participations: List<BattleParticipation>,
     navigatorCallback: (String) -> Unit
 ) {
 
@@ -45,7 +45,7 @@ fun BattleScene(
         LaunchedEffect(Unit) {
             while (true) {
                 viewModel.update()
-                delay(300.milliseconds)
+                delay(30.milliseconds)
             }
         }
 

@@ -10,7 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
+import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
 import es.niadecode.numericabattleroyale.model.numerica.GameState
+import es.niadecode.numericabattleroyale.ui.viewmodel.MainViewModel
 import es.niadecode.numericabattleroyale.ui.viewmodel.NumericaSceneViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -18,10 +20,14 @@ import moe.tlaster.precompose.viewmodel.viewModel
 
 
 @Composable
-fun NumericaScene(navigatorCallback: (String) -> Unit) {
+fun NumericaScene(
+    navigatorCallback: (String) -> Unit,
+    navigateToBattle: (List<BattleParticipation>) -> Unit
+) {
     val viewModel = viewModel(modelClass = NumericaSceneViewModel::class, keys = listOf(null)) {
         NumericaSceneViewModel()
     }
+
 
     val state by viewModel.state.collectAsState()
 
@@ -85,7 +91,8 @@ fun NumericaScene(navigatorCallback: (String) -> Unit) {
                     }
                 }
                 counter.await()
-                navigatorCallback("/battle")
+                //navigatorCallback("/battle")
+                navigateToBattle(viewModel.battleParticipants)
             }
             Text(toBattleText.value, color = MaterialTheme.colors.onBackground)
         }

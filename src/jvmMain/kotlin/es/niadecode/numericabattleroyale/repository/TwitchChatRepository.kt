@@ -14,12 +14,12 @@ class TwitchChatRepository(
     private val externalScope: CoroutineScope,
 ) {
 
-    private val _participationFlow = MutableSharedFlow<GameParticipation>(replay = 0)
+    private val _participationFlow = MutableSharedFlow<GameParticipation>()
     val participationFlow: SharedFlow<GameParticipation> = _participationFlow
 
 
     private val twirk = TwirkBuilder(
-        /* channel = */ "niadecode",
+        /* channel = */ "psuzume",
         /* nick = */ "justinfan5555",
         /* oauth = */ "kappa"
     )

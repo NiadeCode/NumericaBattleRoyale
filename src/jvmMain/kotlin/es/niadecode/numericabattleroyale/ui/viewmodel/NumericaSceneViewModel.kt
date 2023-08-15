@@ -1,5 +1,8 @@
 package es.niadecode.numericabattleroyale.ui.viewmodel
 
+import es.niadecode.numericabattleroyale.model.battle.BattleColors
+import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
+import es.niadecode.numericabattleroyale.model.battle.getMockParticipationList
 import es.niadecode.numericabattleroyale.model.numerica.GameParticipation
 import es.niadecode.numericabattleroyale.model.numerica.GameState
 import es.niadecode.numericabattleroyale.model.numerica.mapToBo
@@ -17,10 +20,10 @@ class NumericaSceneViewModel : ViewModel() {
 
     private val chatRepository by lazy { TwitchChatRepository(viewModelScope) }
 
-    private val _state by lazy {
-        MutableStateFlow<GameState>(GameState.Start)
-    }
+    private val _state = MutableStateFlow<GameState>(GameState.Start)
     val state: StateFlow<GameState> = _state
+
+    val battleParticipants = mutableListOf<BattleParticipation>()
 
     override fun onCleared() {
         chatRepository.close()
@@ -52,6 +55,9 @@ class NumericaSceneViewModel : ViewModel() {
         }
 
         if (gameParticipation.number == current.currentScore + 1) {
+
+            addBattleParticipation(gameParticipation)
+
             current.currentScore++
             current.lastUserName = gameParticipation.userName
 
@@ -68,8 +74,24 @@ class NumericaSceneViewModel : ViewModel() {
         }
     }
 
+    private fun addBattleParticipation(gameParticipation: GameParticipation) {
+        val battleParticipation = battleParticipants.find { it.name == gameParticipation.userName }
+        if (battleParticipation != null) {
+            battleParticipation.soldiers += gameParticipation.number
+        } else {
+            battleParticipants.add(
+                BattleParticipation(
+                    gameParticipation.userName,
+                    BattleColors[battleParticipants.size],
+                    gameParticipation.number
+                )
+            )
+        }
+    }
+
     fun toBattleMock() {
         _state.value = GameState.GameOver(5, "NiadeCode", "NiadeCode")
+        battleParticipants.addAll(getMockParticipationList())
     }
 
 

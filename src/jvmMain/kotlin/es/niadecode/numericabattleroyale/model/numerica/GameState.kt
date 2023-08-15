@@ -1,10 +1,12 @@
 package es.niadecode.numericabattleroyale.model.numerica
 
+import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
+
 sealed class GameState(
     open val currentScore: Int,
     open val maxScore: Int,
     open val lastUserName: String,
-    open val lastUserNameMVP: String
+    open val lastUserNameMVP: String,
 ) {
 
     object Start : GameState(0, 0, "", "")
@@ -18,7 +20,7 @@ sealed class GameState(
     data class GameOver(
         override val maxScore: Int,
         override val lastUserName: String,
-        override val lastUserNameMVP: String
+        override val lastUserNameMVP: String,
     ) : GameState(0, maxScore, lastUserName, lastUserNameMVP)
 
 }
