@@ -7,14 +7,14 @@ data class BattleParticipation(val name: String, val color: Color, var soldiers:
 
 fun getMockParticipationList(): List<BattleParticipation> {
     return listOf(
-        BattleParticipation("NiadeCode", Color.Blue, 1),
-        BattleParticipation("RothioTome", Color(0xFFFF5850), 9),
-        BattleParticipation("RothioTome2", Color.Blue, 2),
-        BattleParticipation("RothioTome3", Color.Black, 3 + 6),
-        BattleParticipation("RothioTome4", Color.Cyan, 4),
-        BattleParticipation("RothioTome5", Color.Green, 5),
-        BattleParticipation("RothioTome6", Color.Yellow, 7),
-        BattleParticipation("RothioTome7", Color.Red, 8),
+        BattleParticipation("NiadeCode", BattleColors[0], 1 + 15 +17),
+        BattleParticipation("RothioTome", BattleColors[1], 9 + 14),
+        BattleParticipation("RothioTome2", BattleColors[2], 2 + 9),
+        BattleParticipation("RothioTome3", BattleColors[3], 3 + 6 + 16),
+        BattleParticipation("RothioTome4", BattleColors[4], 4 + 10),
+        BattleParticipation("RothioTome5", BattleColors[5], 5 + 13),
+        BattleParticipation("RothioTome6", BattleColors[6], 7 + 12),
+        BattleParticipation("RothioTome7", BattleColors[7], 8 + 11),
     )
 }
 
@@ -42,4 +42,4 @@ val BattleColors = listOf(
     Color(0xFFFBCEB1),
 
 
-)
+    )

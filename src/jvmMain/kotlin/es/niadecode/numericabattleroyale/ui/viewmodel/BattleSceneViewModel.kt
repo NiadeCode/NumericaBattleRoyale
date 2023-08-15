@@ -47,18 +47,18 @@ class BattleSceneViewModel() : ViewModel() {
             battleParticipations.forEachIndexed { index, battleParticipation ->
                 val soldierSpawnPoint = getSpawnPoints(
                     points = battleParticipation.soldiers,
-                    radius = battleParticipation.soldiers.toDouble()*4,
+                    radius = battleParticipation.soldiers.toDouble() * 3,
                     center = spawnPoints[index]
                 )
 
-                soldierSpawnPoint.forEach { point: Point ->
+                soldierSpawnPoint.forEachIndexed { soldierIndex, point ->
                     newSoldiers.add(
                         SoldierData(
+                            soldierID = "${battleParticipation.name}$soldierIndex",
                             point = point,
                             name = battleParticipation.name,
                             color = battleParticipation.color,
                             size = 20,
-                            chunk = Point(point.x % CHUNK_SIZE, point.y % CHUNK_SIZE),
                         )
                     )
                 }
@@ -67,14 +67,6 @@ class BattleSceneViewModel() : ViewModel() {
 
         }
 
-        //ship.position = Vector2(width.value / 2.0, height.value / 2.0)
-        //ship.movementVector = Vector2.ZERO
-        //gameObjects.add(ship)
-        // repeat(3) {
-        //   gameObjects.add(AsteroidData().apply {
-        //     position = Vector2(100.0, 100.0); angle = Random.nextDouble() * 360.0; speed = 2.0
-        //   })
-        //  }
         gameState = BattleState.PLAYING
         gameStatus = "Good luck!"
     }
@@ -84,26 +76,26 @@ class BattleSceneViewModel() : ViewModel() {
 
         viewModelScope.launch {
             _soldiers.value = _soldiers.value.map { currentSoldier ->
+                val objetive = soldiers.value.find { it.soldierID == currentSoldier.objetive }
+                if (currentSoldier.objetive.isNotEmpty() && objetive != null) {
+                    currentSoldier.update(objetive)
+                } else {
 
-                val enemyChunk = getEnemiesChunks(currentSoldier)
-
-                return@map soldiers.value
-                    .filter { it.chunk in enemyChunk }
-                    .filter { it.isEnemy(currentSoldier) }
-                    .map { soldierData ->
-                        viewModelScope.async {
-                            Pair(soldierData, soldierData.point.distanceSq(currentSoldier.point))
+                    soldiers.value
+                        .filter { it.isEnemy(currentSoldier) }
+                        .map { soldierData ->
+                            viewModelScope.async {
+                                Pair(soldierData, soldierData.point.distance(currentSoldier.point))
+                            }
                         }
-                    }
-                    .awaitAll().minByOrNull { it.second }
-                    ?.let {
-                        currentSoldier.update(it.first)
-                    } ?: run { currentSoldier }
-
+                        .awaitAll().minByOrNull { it.second }
+                        ?.let {
+                            currentSoldier.update(it.first)
+                        } ?: run { currentSoldier }
+                }
             }
-
-            val tmpSoldiers = soldiers.value.shuffled().toMutableList()
-            soldiers.value.forEach { currentSoldier ->
+            val tmpSoldiers = soldiers.value.toMutableList()
+            soldiers.value.shuffled().forEach { currentSoldier ->
                 if (tmpSoldiers.isNotEmpty() && tmpSoldiers.contains(currentSoldier)) {
                     val leash = soldiers.value
                         .filter { it.isEnemy(currentSoldier) }
@@ -121,22 +113,6 @@ class BattleSceneViewModel() : ViewModel() {
             //    winGame()
             //}
         }
-    }
-
-    private suspend fun getEnemiesChunks(currentSoldier: SoldierData): List<Point> {
-        val enemiesDeferred = soldiers.value
-            .filter { it.isEnemy(currentSoldier) }
-            .distinctBy { it.chunk }
-            .mapIndexed { index, soldierData ->
-                viewModelScope.async {
-                    Pair(soldierData.chunk, soldierData.chunk.distanceSq(currentSoldier.chunk))
-                }
-            }
-        val enemies = enemiesDeferred.awaitAll().sortedBy { it.second }.take(1).map { it.first }
-//            enemies.sortedBy { it.distanceSq(currentSoldier.chunk) }
-//            .take(4)
-//        return enemies
-        return enemies
     }
 
     fun endGame() {

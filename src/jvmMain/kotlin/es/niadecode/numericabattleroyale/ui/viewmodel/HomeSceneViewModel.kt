@@ -1,11 +1,17 @@
 package es.niadecode.numericabattleroyale.ui.viewmodel
 
 import es.niadecode.numericabattleroyale.model.config.ConfigState
+import es.niadecode.numericabattleroyale.repository.TwitchApiRepository
+import es.niadecode.numericabattleroyale.repository.TwitchChatRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class HomeSceneViewModel() : ViewModel() {
+
+    private val apiRepository by lazy { TwitchApiRepository(viewModelScope) }
+
 
     private val _state by lazy {
         MutableStateFlow(ConfigState(false, 0, false))

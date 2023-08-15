@@ -5,11 +5,12 @@ import es.niadecode.numericabattleroyale.ui.viewmodel.CHUNK_SIZE
 import java.awt.Point
 
 data class SoldierData(
+    val soldierID: String,
     var point: Point,
     val name: String,
     val color: Color,
     val size: Int,
-    val chunk: Point,
+    val objetive: String = "",
     val model: Int = (1..3).random()
 ) {
 
@@ -23,7 +24,7 @@ data class SoldierData(
 
         return this.copy(
             point = Point(newX, newY),
-            chunk = Point(point.x % CHUNK_SIZE, point.y % CHUNK_SIZE)
+            objetive = objective.soldierID
         )
     }
 
