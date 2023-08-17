@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
 import es.niadecode.numericabattleroyale.model.numerica.GameState
+import es.niadecode.numericabattleroyale.repository.SettingsRepository
 import es.niadecode.numericabattleroyale.ui.viewmodel.MainViewModel
 import es.niadecode.numericabattleroyale.ui.viewmodel.NumericaSceneViewModel
 import kotlinx.coroutines.async

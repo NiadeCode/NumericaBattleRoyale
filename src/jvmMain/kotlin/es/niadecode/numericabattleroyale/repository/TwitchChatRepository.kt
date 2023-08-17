@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 class TwitchChatRepository(
     private val externalScope: CoroutineScope,
+    private val preferences: SettingsRepository
 ) {
 
     private val _participationFlow = MutableSharedFlow<GameParticipation>()
@@ -19,9 +20,9 @@ class TwitchChatRepository(
 
 
     private val twirk = TwirkBuilder(
-        /* channel = */ "psuzume",
-        /* nick = */ "justinfan5555",
-        /* oauth = */ "kappa"
+        /* channel = */ preferences.getChannel(),
+        /* nick = */ preferences.getChannel(),
+        /* oauth = */ "oauth:${preferences.getToken()}"
     )
         //.setVerboseMode(true)
         .build().apply {
@@ -29,7 +30,12 @@ class TwitchChatRepository(
             addIrcListener(object : TwirkListener {
                 override fun onPrivMsg(sender: TwitchUser?, message: TwitchMessage?) {
                     //   println("${sender?.displayName}: ${message?.content}")
-                    onTwitchMessageReceived(sender?.displayName.orEmpty(), message?.content.orEmpty())
+                    onTwitchMessageReceived(
+                        sender?.displayName.orEmpty(),
+                        message?.content.orEmpty(),
+                        sender?.userID.toString(),
+                        sender?.isMod ?: false
+                    )
                 }
 
             })
@@ -39,11 +45,11 @@ class TwitchChatRepository(
         twirk.close()
     }
 
-    private fun onTwitchMessageReceived(userName: String, message: String) {
+    private fun onTwitchMessageReceived(userName: String, message: String, userId: String, mod: Boolean) {
         try {
             val number = Integer.parseInt(message)
             externalScope.launch {
-                _participationFlow.emit(GameParticipation(userName, number))
+                _participationFlow.emit(GameParticipation(userName, number, userId, mod))
             }
 
         } catch (e: NumberFormatException) {

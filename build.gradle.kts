@@ -3,6 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose")
+    kotlin("plugin.serialization") version "1.8.0"
 }
 
 group = "es.niadecode"
@@ -14,13 +15,13 @@ repositories {
     google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    maven ("https://jitpack.io")
+    maven("https://jitpack.io")
 }
 
 kotlin {
     jvm {
         jvmToolchain(11)
-     //   withJava()
+        //   withJava()
     }
     sourceSets {
         val jvmMain by getting {
@@ -43,6 +44,11 @@ kotlin {
 
                 implementation("io.ktor:ktor-client-core:$ktor_version")
                 implementation("io.ktor:ktor-client-cio:$ktor_version")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+                implementation("io.ktor:ktor-client-logging:$ktor_version")
+                implementation("ch.qos.logback:logback-classic:1.4.11")
+
             }
         }
         val jvmTest by getting

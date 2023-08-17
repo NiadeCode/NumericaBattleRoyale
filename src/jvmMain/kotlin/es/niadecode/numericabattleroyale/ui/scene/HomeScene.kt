@@ -20,7 +20,11 @@ fun HomeScene(navigatorCallback: (String) -> Unit) {
     }
 
     val state by viewModel.state.collectAsState()
+    val navigate by viewModel.navigate.collectAsState()
 
+    if (navigate){
+        navigatorCallback("/numerica")
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -62,7 +66,7 @@ fun HomeScene(navigatorCallback: (String) -> Unit) {
                 ),
 
                 onCheckedChange = {
-                    viewModel.setModInmunity(it)
+                    viewModel.setModImmunity(it)
                 })
 
             Text(
@@ -74,7 +78,10 @@ fun HomeScene(navigatorCallback: (String) -> Unit) {
         }
 
 
-        Button(onClick = { navigatorCallback("/numerica") }) {
+        Button(onClick = {
+//            navigatorCallback("/numerica")
+            viewModel.connectTwitch()
+        }) {
             Text("Conectar a twitch", style = MaterialTheme.typography.button)
         }
     }

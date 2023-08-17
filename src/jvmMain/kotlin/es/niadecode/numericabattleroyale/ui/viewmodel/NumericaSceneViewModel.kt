@@ -7,7 +7,10 @@ import es.niadecode.numericabattleroyale.model.numerica.GameParticipation
 import es.niadecode.numericabattleroyale.model.numerica.GameState
 import es.niadecode.numericabattleroyale.model.numerica.mapToBo
 import es.niadecode.numericabattleroyale.model.numerica.mapToVo
+import es.niadecode.numericabattleroyale.repository.SettingsRepository
+import es.niadecode.numericabattleroyale.repository.TwitchApiRepository
 import es.niadecode.numericabattleroyale.repository.TwitchChatRepository
+import es.niadecode.numericabattleroyale.util.createPreferences
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,9 +19,11 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 
-class NumericaSceneViewModel : ViewModel() {
+class NumericaSceneViewModel() : ViewModel() {
 
-    private val chatRepository by lazy { TwitchChatRepository(viewModelScope) }
+    private val settingsRepository: SettingsRepository by lazy { SettingsRepository(createPreferences()) }
+    private val chatRepository by lazy { TwitchChatRepository(viewModelScope, settingsRepository) }
+    private val apiRepository by lazy { TwitchApiRepository(viewModelScope, settingsRepository) }
 
     private val _state = MutableStateFlow<GameState>(GameState.Start)
     val state: StateFlow<GameState> = _state
@@ -41,6 +46,7 @@ class NumericaSceneViewModel : ViewModel() {
             chatRepository.participationFlow
                 .collect {
                     onParticipationReceived(it)
+                    apiRepository.ban(Pair(it.userId, it.number))
                 }
         }
     }
