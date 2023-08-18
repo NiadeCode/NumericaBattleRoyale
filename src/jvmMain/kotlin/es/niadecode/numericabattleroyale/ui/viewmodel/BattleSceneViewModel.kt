@@ -6,10 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
 import es.niadecode.numericabattleroyale.model.battle.SoldierData
+import es.niadecode.numericabattleroyale.repository.SettingsRepository
+import es.niadecode.numericabattleroyale.repository.TwitchApiRepository
 import es.niadecode.numericabattleroyale.ui.state.BattleState
-import java.awt.Point
-import kotlin.math.cos
-import kotlin.math.sin
+import es.niadecode.numericabattleroyale.util.createPreferences
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,10 +17,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import java.awt.Point
+import kotlin.math.cos
+import kotlin.math.sin
 
 const val CHUNK_SIZE = 20
 
 class BattleSceneViewModel() : ViewModel() {
+
+    private val settingsRepository: SettingsRepository by lazy { SettingsRepository(createPreferences()) }
+    private val apiRepository by lazy { TwitchApiRepository(viewModelScope, settingsRepository) }
 
     private val _soldiers by lazy {
         MutableStateFlow<List<SoldierData>>(emptyList())
@@ -122,7 +128,23 @@ class BattleSceneViewModel() : ViewModel() {
     fun endGame() {
         //    gameObjects.remove(ship)
         gameState = BattleState.GLORY
-        gameStatus = "glory to %s!"
+
+        gameStatus = "GLORY TO ${_soldiers.value.distinctBy { it.name }.first().name}!"
+
+        distributePrizes(_soldiers.value.distinctBy { it.name }.first().name)
+
+    }
+
+    private fun distributePrizes(name: String) {
+        viewModelScope.launch {
+            participationList.filter {
+                it.name != name && it.isMod.not()
+            }.forEach {
+                viewModelScope.launch {
+                    apiRepository.ban(it.userId, it.soldiers * settingsRepository.getBanMultiplier())
+                }
+            }
+        }
     }
 
 

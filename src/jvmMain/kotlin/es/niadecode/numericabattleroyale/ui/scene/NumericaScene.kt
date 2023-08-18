@@ -1,19 +1,15 @@
 package es.niadecode.numericabattleroyale.ui.scene
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
 import es.niadecode.numericabattleroyale.model.numerica.GameState
-import es.niadecode.numericabattleroyale.repository.SettingsRepository
-import es.niadecode.numericabattleroyale.ui.viewmodel.MainViewModel
 import es.niadecode.numericabattleroyale.ui.viewmodel.NumericaSceneViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -22,7 +18,7 @@ import moe.tlaster.precompose.viewmodel.viewModel
 
 @Composable
 fun NumericaScene(
-    navigatorCallback: (String) -> Unit,
+    goBack: () -> Unit,
     navigateToBattle: (List<BattleParticipation>) -> Unit
 ) {
     val viewModel = viewModel(modelClass = NumericaSceneViewModel::class, keys = listOf(null)) {
@@ -31,6 +27,12 @@ fun NumericaScene(
 
 
     val state by viewModel.state.collectAsState()
+
+    IconButton(onClick = {
+        goBack()
+    }) {
+        Icon(painter = painterResource("close_FILL0_wght400_GRAD0_opsz48.svg"), null)
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),

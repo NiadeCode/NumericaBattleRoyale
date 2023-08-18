@@ -11,6 +11,8 @@ import es.niadecode.numericabattleroyale.ui.scene.HomeScene
 import es.niadecode.numericabattleroyale.ui.scene.NumericaScene
 import es.niadecode.numericabattleroyale.ui.viewmodel.MainViewModel
 import moe.tlaster.precompose.navigation.NavHost
+import moe.tlaster.precompose.navigation.NavOptions
+import moe.tlaster.precompose.navigation.PopUpTo
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.viewmodel.viewModel
 
@@ -29,16 +31,18 @@ fun App() {
     NavHost(
         modifier = Modifier.background(MaterialTheme.colors.background),
         navigator = navigator,
-        initialRoute = "/home"
+        initialRoute = "/home",
     ) {
 
         scene("/home") {
-            HomeScene { navigator.navigate(it) }
+            HomeScene { navigator.navigate(it, options = NavOptions(launchSingleTop = true )) }
         }
 
         scene("/numerica") {
             NumericaScene(
-                navigatorCallback = {},
+                goBack = {
+                    navigator.navigate("/home", options = NavOptions(launchSingleTop = true ))
+                },
                 navigateToBattle = {
                     battleParticipations = it
                     navigator.navigate("/battle")
@@ -47,7 +51,7 @@ fun App() {
         }
 
         scene("/battle") {
-            BattleScene(battleParticipations) { navigator.navigate("/numerica") }
+            BattleScene(battleParticipations) { navigator.navigate("/numerica", ) }
         }
     }
 }

@@ -46,7 +46,7 @@ class NumericaSceneViewModel() : ViewModel() {
             chatRepository.participationFlow
                 .collect {
                     if (settingsRepository.getBan())
-                    apiRepository.ban(Pair(it.userId, it.number))
+                        apiRepository.ban(it.userId, it.number)
                     onParticipationReceived(it)
                 }
         }
@@ -59,6 +59,15 @@ class NumericaSceneViewModel() : ViewModel() {
 
         if (gameParticipation.userName == current.lastUserName) {
             //        return //TODO uncomment to prevent participation from the same player
+        }
+
+        if (gameParticipation.number >= settingsRepository.getmaxParticipation()) {
+            _state.value = GameState.GameOver(
+                current.currentScore,
+                current.maxScore,
+                current.lastUserName,
+                current.lastUserNameMVP
+            )
         }
 
         if (gameParticipation.number == current.currentScore + 1) {
@@ -76,7 +85,12 @@ class NumericaSceneViewModel() : ViewModel() {
             _state.value = current.mapToVo()
         } else {
             if (current.currentScore != 0) {
-                _state.value = GameState.GameOver(current.maxScore, current.lastUserName, current.lastUserNameMVP)
+                _state.value = GameState.GameOver(
+                    current.currentScore,
+                    current.maxScore,
+                    current.lastUserName,
+                    current.lastUserNameMVP
+                )
             }
         }
     }
@@ -89,6 +103,8 @@ class NumericaSceneViewModel() : ViewModel() {
             battleParticipants.add(
                 BattleParticipation(
                     gameParticipation.userName,
+                    gameParticipation.userId,
+                    gameParticipation.mod,
                     BattleColors[battleParticipants.size],
                     gameParticipation.number
                 )
@@ -97,7 +113,7 @@ class NumericaSceneViewModel() : ViewModel() {
     }
 
     fun toBattleMock() {
-        _state.value = GameState.GameOver(5, "NiadeCode", "NiadeCode")
+        _state.value = GameState.GameOver(currentScore = 5, 5, "NiadeCode", "NiadeCode")
         battleParticipants.addAll(getMockParticipationList())
     }
 

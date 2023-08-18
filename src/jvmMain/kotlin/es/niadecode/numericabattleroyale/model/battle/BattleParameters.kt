@@ -2,19 +2,19 @@ package es.niadecode.numericabattleroyale.model.battle
 
 import androidx.compose.ui.graphics.Color
 
-data class BattleParticipation(val name: String, val color: Color, var soldiers: Int)
+data class BattleParticipation(val name: String, val userId: String, val isMod: Boolean, val color: Color, var soldiers: Int)
 
 
 fun getMockParticipationList(): List<BattleParticipation> {
     return listOf(
-        BattleParticipation("NiadeCode", BattleColors[0], 1 + 15 +17),
-        BattleParticipation("RothioTome", BattleColors[1], 9 + 14),
-        BattleParticipation("RothioTome2", BattleColors[2], 2 + 9),
-        BattleParticipation("RothioTome3", BattleColors[3], 3 + 6 + 16),
-        BattleParticipation("RothioTome4", BattleColors[4], 4 + 10),
-        BattleParticipation("RothioTome5", BattleColors[5], 5 + 13),
-        BattleParticipation("RothioTome6", BattleColors[6], 7 + 12),
-        BattleParticipation("RothioTome7", BattleColors[7], 8 + 11),
+        BattleParticipation("NiadeCode","null", true, BattleColors[0], 1 + 15 +17),
+        BattleParticipation("RothioTome","null", false, BattleColors[1], 9 + 14),
+        BattleParticipation("RothioTome2","null", false, BattleColors[2], 2 + 9),
+        BattleParticipation("RothioTome3","null", false, BattleColors[3], 3 + 6 + 16),
+        BattleParticipation("RothioTome4","null", false, BattleColors[4], 4 + 10),
+        BattleParticipation("RothioTome5","null", false, BattleColors[5], 5 + 13),
+        BattleParticipation("RothioTome6","null", false, BattleColors[6], 7 + 12),
+        BattleParticipation("RothioTome7","null", false, BattleColors[7], 8 + 11),
     )
 }
 

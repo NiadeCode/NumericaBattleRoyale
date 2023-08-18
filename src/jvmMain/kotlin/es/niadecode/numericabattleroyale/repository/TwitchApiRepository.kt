@@ -69,17 +69,19 @@ class TwitchApiRepository(
 
     //{"error":"Unauthorized","status":401,"message":"Missing scope: moderator:manage:banned_users"}
     // TERMINA LAS OPCIONES Y LUEGO SIGUES COÑO
-    suspend fun ban(victim: Pair<String, Int>) {
-        val token = settingsRepository.getToken()
-        client?.post(twitchBanUrl) {
-            header(HttpHeaders.Authorization, "Bearer $token")
-            header("Client-Id", settingsRepository.getClientID())
-            contentType(ContentType.Application.Json)
-            url {
-                parameters.append("broadcaster_id", settingsRepository.getClientID())
-                parameters.append("moderator_id", settingsRepository.getClientID())
+    suspend fun ban(victimId: String, duration: Int) {
+        if (settingsRepository.getBan()) {
+            val token = settingsRepository.getToken()
+            client?.post(twitchBanUrl) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header("Client-Id", settingsRepository.getClientID())
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("broadcaster_id", settingsRepository.getClientID())
+                    parameters.append("moderator_id", settingsRepository.getClientID())
+                }
+                    setBody(BanRequest(BanRequestBody(victimId, duration.coerceIn(1..1209599))))
             }
-            setBody(BanRequest(BanRequestBody(victim.first, victim.second)))
         }
     }
 }

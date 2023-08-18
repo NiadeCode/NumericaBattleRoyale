@@ -18,10 +18,11 @@ sealed class GameState(
     ) : GameState(currentScore, maxScore, lastUserName, lastUserNameMVP)
 
     data class GameOver(
+        override val currentScore: Int,
         override val maxScore: Int,
         override val lastUserName: String,
         override val lastUserNameMVP: String,
-    ) : GameState(0, maxScore, lastUserName, lastUserNameMVP)
+    ) : GameState(currentScore, maxScore, lastUserName, lastUserNameMVP)
 
 }
 

@@ -12,6 +12,7 @@ class SettingsRepository(
     private val timeoutKey = "timeout"
     private val timeoutMultiplierKey = "timeoutMultiplier"
     private val vipKey = "vip"
+    private val vipUserKey = "vipUser"
     private val moderatorImmunityKey = "mods"
     private val maxParticipationsKey = "maxParticipations"
 
@@ -39,6 +40,10 @@ class SettingsRepository(
         preferences.put(vipKey, hasVip.toString())
     }
 
+    fun setMod(mod: Boolean) {
+        preferences.put(moderatorImmunityKey, mod.toString())
+    }
+
     fun setMaxParticipation(max: Int) {
         preferences.put(maxParticipationsKey, max.toString())
     }
@@ -57,23 +62,23 @@ class SettingsRepository(
     }
 
     fun getBan(): Boolean {
-        return preferences.get(timeoutKey, "").toBoolean()
+        return preferences.get(timeoutKey, "true").toBoolean()
     }
 
     fun getBanMultiplier(): Int {
-        return preferences.get(timeoutMultiplierKey, "").toInt()
+        return preferences.get(timeoutMultiplierKey, "2").toInt()
     }
 
     fun getVip(): Boolean {
-        return preferences.get(vipKey, "").toBoolean()
+        return preferences.get(vipKey, "true").toBoolean()
     }
 
     fun getModsImmunity(): Boolean {
-        return preferences.get(moderatorImmunityKey, "").toBoolean()
+        return preferences.get(moderatorImmunityKey, "false").toBoolean()
     }
 
     fun getmaxParticipation(): Int {
-        return preferences.get(maxParticipationsKey, "").toInt()
+        return preferences.get(maxParticipationsKey, "20").toInt()
     }
 
 

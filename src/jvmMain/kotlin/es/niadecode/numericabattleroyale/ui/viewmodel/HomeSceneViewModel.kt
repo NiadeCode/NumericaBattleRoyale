@@ -7,16 +7,15 @@ import es.niadecode.numericabattleroyale.repository.TwitchLoginRepository
 import es.niadecode.numericabattleroyale.repository.twitchAuthUrl
 import es.niadecode.numericabattleroyale.util.createPreferences
 import es.niadecode.numericabattleroyale.util.openWebpage
-import java.util.Calendar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import java.util.*
 
-class HomeSceneViewModel(
-) : ViewModel() {
+class HomeSceneViewModel : ViewModel() {
 
     private val settingsRepository: SettingsRepository by lazy { SettingsRepository(createPreferences()) }
     private val apiRepository by lazy { TwitchApiRepository(viewModelScope, settingsRepository) }
@@ -49,6 +48,10 @@ class HomeSceneViewModel(
         _state.value = state.value.copy(timeout = newTimeoutsBoolean)
     }
 
+    fun setVip(vip: Boolean) {
+        _state.value = state.value.copy(vip = vip)
+    }
+
     fun setTimeoutsMultiplier(newMultiplier: Int) {
         _state.value = state.value.copy(timeoutMultiplier = newMultiplier)
     }
@@ -58,21 +61,41 @@ class HomeSceneViewModel(
     }
 
     fun connectTwitch() {
-        val port = 38769
-        val s = createAutorizationUrl(port)
-        loginRepository.startServer(port)
+        if (state.value.isConnected) {
+            viewModelScope.launch {
+                _navigate.value = true
+                delay(50)
+                _navigate.value = false
+                saveSettings()
+            }
+        } else {
+            val port = 38769
+            val s = createAutorizationUrl(port)
+            loginRepository.startServer(port)
 
-        viewModelScope.launch {
-            loginRepository.tokenFlow.collect {
-                apiRepository.validate().collect {
-                    _navigate.value = true
-                    delay(50)
-                    _navigate.value = false
+
+            viewModelScope.launch {
+                loginRepository.tokenFlow.collect {
+                    apiRepository.validate().collect {
+                        _navigate.value = true
+                        delay(50)
+                        _state.value = _state.value.copy(isConnected = true)
+                        _navigate.value = false
+                    }
                 }
             }
-        }
 
-        openWebpage(twitchAuthUrl + s)
+            openWebpage(twitchAuthUrl + s)
+        }
+    }
+
+    private fun saveSettings() {
+        val state = state.value
+        settingsRepository.setBan(state.timeout)
+        settingsRepository.setBanMultiplier(state.timeoutMultiplier)
+        settingsRepository.setVip(state.vip)
+        settingsRepository.setMod(state.modImmunity)
+        settingsRepository.setMaxParticipation(state.maxParticipations)
     }
 
     private fun createAutorizationUrl(port: Int): String {
@@ -97,5 +120,17 @@ class HomeSceneViewModel(
                 "&" +
                 "scope=" + scopes.joinToString("+")
         return s
+    }
+
+    fun updateTimeoutMultiplier(multiplier: Int?) {
+        multiplier?.let {
+            _state.value = _state.value.copy(timeoutMultiplier = it)
+        }
+    }
+
+    fun updateMax(max: Int?) {
+        max?.let {
+            _state.value = _state.value.copy(maxParticipations = it)
+        }
     }
 }
