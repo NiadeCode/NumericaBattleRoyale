@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
-import es.niadecode.numericabattleroyale.model.battle.getMockParticipationList
 import es.niadecode.numericabattleroyale.ui.composable.Soldier
 import es.niadecode.numericabattleroyale.ui.state.BattleState
 import es.niadecode.numericabattleroyale.ui.viewmodel.BattleSceneViewModel
@@ -24,7 +23,7 @@ import moe.tlaster.precompose.viewmodel.viewModel
 @Composable
 fun BattleScene(
     participations: List<BattleParticipation>,
-    navigatorCallback: (String) -> Unit
+    backToNumerica: () -> Unit
 ) {
 
     val viewModel = viewModel(modelClass = BattleSceneViewModel::class, keys = listOf(null)) {
@@ -38,19 +37,19 @@ fun BattleScene(
 
         val state = viewModel.state.collectAsState()
 
-        if (state.value == BattleState.START) {
+        if (state.value == BattleState.GLORY) {
             val toBattleText = remember { mutableStateOf("") }
             LaunchedEffect(null) {
                 var i = 3
                 val counter = async {
                     while (i != 0) {
-                        toBattleText.value = "Going to battle in $i"
+                        toBattleText.value = "Back to Numerica in $i"
                         delay(1000)
                         i--
                     }
                 }
                 counter.await()
-                //navigatorCallback("/battle")
+                backToNumerica()
             //    navigateToBattle(viewModel.battleParticipants)
             }
             Text(toBattleText.value, color = MaterialTheme.colors.onBackground)
@@ -78,11 +77,11 @@ fun BattleScene(
         ) {
 
 
-            Button(onClick = { navigatorCallback("/numerica") }) {
+            Button(onClick = { backToNumerica() }) {
                 Text("Volver")
             }
 
-            Text("Batalla WIP")
+            Text(viewModel.gameStatus)
 
 
         }

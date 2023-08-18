@@ -69,7 +69,7 @@ class TwitchApiRepository(
                 contentType(ContentType.Application.Json)
                 url {
                     parameters.append("broadcaster_id", settingsRepository.getUserId())
-                    parameters.append("moderator_id", settingsRepository.getClientID())
+                    parameters.append("moderator_id", settingsRepository.getUserId())
                 }
                 setBody(BanRequest(BanRequestBody(victimId, duration.coerceIn(1..1209599))))
             }
