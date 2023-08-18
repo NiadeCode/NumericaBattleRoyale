@@ -9,6 +9,7 @@ class SettingsRepository(
     private val tokenKey = "token"
     private val channelKey = "channel"
     private val clientIdKey = "clientId"
+    private val userIdKey = "userId"
     private val timeoutKey = "timeout"
     private val timeoutMultiplierKey = "timeoutMultiplier"
     private val vipKey = "vip"
@@ -26,6 +27,10 @@ class SettingsRepository(
 
     fun setClientID(clientId: String) {
         preferences.put(clientIdKey, clientId)
+    }
+
+    fun setUserId(userId: String) {
+        preferences.put(userIdKey, userId)
     }
 
     fun setBan(hasBan: Boolean) {
@@ -48,6 +53,10 @@ class SettingsRepository(
         preferences.put(maxParticipationsKey, max.toString())
     }
 
+    fun setUserVip(userVip: String) {
+        preferences.put(vipUserKey, userVip)
+    }
+
 
     fun getToken(): String {
         return preferences.get(tokenKey, "")
@@ -61,24 +70,32 @@ class SettingsRepository(
         return preferences.get(clientIdKey, "")
     }
 
+    fun getUserId(): String {
+        return preferences.get(userIdKey, "")
+    }
+
     fun getBan(): Boolean {
-        return preferences.get(timeoutKey, "true").toBoolean()
+        return preferences.getBoolean(timeoutKey, true)
     }
 
     fun getBanMultiplier(): Int {
-        return preferences.get(timeoutMultiplierKey, "2").toInt()
+        return preferences.getInt(timeoutMultiplierKey, 2)
     }
 
     fun getVip(): Boolean {
-        return preferences.get(vipKey, "true").toBoolean()
+        return preferences.getBoolean(vipKey, true)
     }
 
     fun getModsImmunity(): Boolean {
-        return preferences.get(moderatorImmunityKey, "false").toBoolean()
+        return preferences.getBoolean(moderatorImmunityKey, false)
     }
 
     fun getmaxParticipation(): Int {
-        return preferences.get(maxParticipationsKey, "20").toInt()
+        return preferences.getInt(maxParticipationsKey, 20)
+    }
+
+    fun getVipUser(): String {
+        return preferences.get(vipUserKey, "")
     }
 
 

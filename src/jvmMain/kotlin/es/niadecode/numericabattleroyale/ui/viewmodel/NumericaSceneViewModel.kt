@@ -23,7 +23,6 @@ class NumericaSceneViewModel() : ViewModel() {
 
     private val settingsRepository: SettingsRepository by lazy { SettingsRepository(createPreferences()) }
     private val chatRepository by lazy { TwitchChatRepository(viewModelScope, settingsRepository) }
-    private val apiRepository by lazy { TwitchApiRepository(viewModelScope, settingsRepository) }
 
     private val _state = MutableStateFlow<GameState>(GameState.Start)
     val state: StateFlow<GameState> = _state
@@ -45,8 +44,6 @@ class NumericaSceneViewModel() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             chatRepository.participationFlow
                 .collect {
-                    if (settingsRepository.getBan())
-                        apiRepository.ban(it.userId, it.number)
                     onParticipationReceived(it)
                 }
         }
@@ -61,13 +58,14 @@ class NumericaSceneViewModel() : ViewModel() {
             //        return //TODO uncomment to prevent participation from the same player
         }
 
-        if (gameParticipation.number >= settingsRepository.getmaxParticipation()) {
+        if (gameParticipation.number > settingsRepository.getmaxParticipation()) {
             _state.value = GameState.GameOver(
                 current.currentScore,
                 current.maxScore,
                 current.lastUserName,
                 current.lastUserNameMVP
             )
+            return
         }
 
         if (gameParticipation.number == current.currentScore + 1) {

@@ -72,7 +72,7 @@ class HomeSceneViewModel : ViewModel() {
             val port = 38769
             val s = createAutorizationUrl(port)
             loginRepository.startServer(port)
-
+            saveSettings()
 
             viewModelScope.launch {
                 loginRepository.tokenFlow.collect {

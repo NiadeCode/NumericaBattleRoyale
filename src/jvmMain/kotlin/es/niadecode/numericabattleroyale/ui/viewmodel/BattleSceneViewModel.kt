@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
 import es.niadecode.numericabattleroyale.model.battle.SoldierData
+import es.niadecode.numericabattleroyale.model.numerica.GameState
 import es.niadecode.numericabattleroyale.repository.SettingsRepository
 import es.niadecode.numericabattleroyale.repository.TwitchApiRepository
 import es.niadecode.numericabattleroyale.ui.state.BattleState
@@ -35,7 +36,11 @@ class BattleSceneViewModel() : ViewModel() {
     var participationList: List<BattleParticipation> = emptyList()
 
     //var soldiers = mutableStateListOf<SoldierData>()
-    var gameState by mutableStateOf(BattleState.START)
+  //  var gameState by mutableStateOf(BattleState.START)
+
+    private val _state = MutableStateFlow<BattleState>(BattleState.START)
+    val state: StateFlow<BattleState> = _state
+
     var gameStatus by mutableStateOf("Let's play!")
 
     fun startGame(battleParticipations: List<BattleParticipation>, center: Point, radius: Double) {
@@ -76,7 +81,7 @@ class BattleSceneViewModel() : ViewModel() {
 
         }
 
-        gameState = BattleState.PLAYING
+        _state.value = BattleState.PLAYING
         gameStatus = "Good luck!"
     }
 
@@ -127,7 +132,7 @@ class BattleSceneViewModel() : ViewModel() {
 
     fun endGame() {
         //    gameObjects.remove(ship)
-        gameState = BattleState.GLORY
+        _state.value = BattleState.GLORY
 
         gameStatus = "GLORY TO ${_soldiers.value.distinctBy { it.name }.first().name}!"
 
@@ -136,13 +141,26 @@ class BattleSceneViewModel() : ViewModel() {
     }
 
     private fun distributePrizes(name: String) {
+        println("distributePrizes")
         viewModelScope.launch {
+            val modsImmunity = settingsRepository.getModsImmunity()
             participationList.filter {
-                it.name != name && it.isMod.not()
-            }.forEach {
-                viewModelScope.launch {
-                    apiRepository.ban(it.userId, it.soldiers * settingsRepository.getBanMultiplier())
+                it.name != name
+            }
+                .filter {
+                    if (modsImmunity)
+                        it.isMod.not()
+                    else true
                 }
+                .forEach {
+                    viewModelScope.launch {
+                        println("ban ${it.name} ${it.userId}")
+                        apiRepository.ban(it.userId, it.soldiers * settingsRepository.getBanMultiplier())
+                    }
+                }
+            val winner = participationList.find { it.name == name }
+            winner?.let {
+                apiRepository.vip(winner.userId)
             }
         }
     }

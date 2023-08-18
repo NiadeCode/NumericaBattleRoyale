@@ -14,7 +14,6 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 class TwitchApiRepository(
@@ -26,27 +25,17 @@ class TwitchApiRepository(
     private val twitchVipUrl = "https://api.twitch.tv/helix/channels/vips"
     private val twitchSettingsUrl = "https://api.twitch.tv/helix/chat/settings"
 
-    private var client: HttpClient? = null
+    private var client: HttpClient? = HttpClient(CIO) {
 
-    init {
-        externalScope.launch {
-            client = HttpClient(CIO) {
-
-                install(ContentNegotiation) {
-                    json(Json {
-                        ignoreUnknownKeys = true
-                    })
-                }
-                install(Logging) {
-                    logger = Logger.DEFAULT
-                    level = LogLevel.ALL
-                }
-            }
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+            })
         }
-    }
-
-    fun close() {
-        client?.close()
+        install(Logging) {
+            logger = Logger.DEFAULT
+            level = LogLevel.ALL
+        }
     }
 
     suspend fun validate(): Flow<Boolean> {
@@ -58,6 +47,7 @@ class TwitchApiRepository(
             val validateResponse: ValidateResponse = call.body()
             if (call.status.isSuccess()) {
                 settingsRepository.setClientID(validateResponse.clientId)
+                settingsRepository.setUserId(validateResponse.userId)
                 settingsRepository.setChannel(validateResponse.login)
                 emit(true)
             } else {
@@ -70,6 +60,7 @@ class TwitchApiRepository(
     //{"error":"Unauthorized","status":401,"message":"Missing scope: moderator:manage:banned_users"}
     // TERMINA LAS OPCIONES Y LUEGO SIGUES COÑO
     suspend fun ban(victimId: String, duration: Int) {
+        println(settingsRepository.getBan())
         if (settingsRepository.getBan()) {
             val token = settingsRepository.getToken()
             client?.post(twitchBanUrl) {
@@ -77,10 +68,50 @@ class TwitchApiRepository(
                 header("Client-Id", settingsRepository.getClientID())
                 contentType(ContentType.Application.Json)
                 url {
-                    parameters.append("broadcaster_id", settingsRepository.getClientID())
+                    parameters.append("broadcaster_id", settingsRepository.getUserId())
                     parameters.append("moderator_id", settingsRepository.getClientID())
                 }
-                    setBody(BanRequest(BanRequestBody(victimId, duration.coerceIn(1..1209599))))
+                setBody(BanRequest(BanRequestBody(victimId, duration.coerceIn(1..1209599))))
+            }
+        }
+    }
+
+    suspend fun vip(winnerID: String) {
+        if (settingsRepository.getVip()) {
+            val unvipUser = settingsRepository.getVipUser()
+            if (unvipUser.isNotEmpty()) {
+                unVip(unvipUser)
+            }
+            val token = settingsRepository.getToken()
+            client?.post(twitchVipUrl) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header("Client-Id", settingsRepository.getClientID())
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("user_id", winnerID)
+                    parameters.append("broadcaster_id", settingsRepository.getUserId())
+                }
+            }.also {
+                if (it?.status?.isSuccess() == true) {
+                    settingsRepository.setUserVip(winnerID)
+                } else {
+                    settingsRepository.setUserVip("")
+                }
+            }
+        }
+    }
+
+    suspend fun unVip(winnerID: String) {
+        if (settingsRepository.getVip()) {
+            val token = settingsRepository.getToken()
+            client?.delete(twitchVipUrl) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header("Client-Id", settingsRepository.getClientID())
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("user_id", winnerID)
+                    parameters.append("broadcaster_id", settingsRepository.getClientID())
+                }
             }
         }
     }
