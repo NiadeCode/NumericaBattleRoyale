@@ -8,7 +8,6 @@ import es.niadecode.numericabattleroyale.model.numerica.GameState
 import es.niadecode.numericabattleroyale.model.numerica.mapToBo
 import es.niadecode.numericabattleroyale.model.numerica.mapToVo
 import es.niadecode.numericabattleroyale.repository.SettingsRepository
-import es.niadecode.numericabattleroyale.repository.TwitchApiRepository
 import es.niadecode.numericabattleroyale.repository.TwitchChatRepository
 import es.niadecode.numericabattleroyale.util.createPreferences
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -55,7 +54,7 @@ class NumericaSceneViewModel() : ViewModel() {
         val current = state.value.mapToBo()
 
         if (gameParticipation.userName == current.lastUserName) {
-            //        return //TODO uncomment to prevent participation from the same player
+            return //TODO uncomment to prevent participation from the same player
         }
 
         if (gameParticipation.number > settingsRepository.getmaxParticipation()) {
