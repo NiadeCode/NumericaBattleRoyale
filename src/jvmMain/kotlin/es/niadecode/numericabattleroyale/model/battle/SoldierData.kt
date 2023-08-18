@@ -1,7 +1,6 @@
 package es.niadecode.numericabattleroyale.model.battle
 
 import androidx.compose.ui.graphics.Color
-import es.niadecode.numericabattleroyale.ui.viewmodel.CHUNK_SIZE
 import java.awt.Point
 
 data class SoldierData(
@@ -30,10 +29,8 @@ data class SoldierData(
 
     fun overlapsWith(other: SoldierData): Boolean {
         // Overlap means the center of the game objects are closer together than the sum of their radiuses
-        val distance = this.point.distance(other.point)
-
-        println("$this is distant $distance from $other")
-        return distance < (this.size)
+        return other.point.x in (this.point.x - 5)..(this.point.x + 5) &&
+                other.point.y in (this.point.y - 5)..(this.point.y + 5)
     }
 
     fun isEnemy(other: SoldierData): Boolean {

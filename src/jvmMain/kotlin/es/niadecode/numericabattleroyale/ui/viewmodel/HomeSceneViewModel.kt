@@ -7,13 +7,13 @@ import es.niadecode.numericabattleroyale.repository.TwitchLoginRepository
 import es.niadecode.numericabattleroyale.repository.twitchAuthUrl
 import es.niadecode.numericabattleroyale.util.createPreferences
 import es.niadecode.numericabattleroyale.util.openWebpage
+import java.util.Calendar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
-import java.util.*
 
 class HomeSceneViewModel(
 ) : ViewModel() {
@@ -25,14 +25,16 @@ class HomeSceneViewModel(
     private val _state by lazy {
         MutableStateFlow(
             ConfigState(
-                timeout = false,
-                timeoutMultiplier = 10,
-                vip = false,
+                timeout = true,
+                timeoutMultiplier = 2,
+                vip = true,
                 modImmunity = false,
-                isConnected = false
+                isConnected = false,
+                maxParticipations = 20,
             )
         )
     }
+
     val state: StateFlow<ConfigState> = _state
 
     private val _navigate = MutableStateFlow(false)
@@ -41,7 +43,6 @@ class HomeSceneViewModel(
     override fun onCleared() {
         super.onCleared()
         loginRepository.stopServer()
-//        stopServer()
     }
 
     fun setTimeouts(newTimeoutsBoolean: Boolean) {

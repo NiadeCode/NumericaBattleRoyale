@@ -45,8 +45,9 @@ class NumericaSceneViewModel() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             chatRepository.participationFlow
                 .collect {
-                    onParticipationReceived(it)
+                    if (settingsRepository.getBan())
                     apiRepository.ban(Pair(it.userId, it.number))
+                    onParticipationReceived(it)
                 }
         }
     }

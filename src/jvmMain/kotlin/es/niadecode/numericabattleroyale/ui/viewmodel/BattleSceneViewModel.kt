@@ -7,6 +7,9 @@ import androidx.compose.runtime.setValue
 import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
 import es.niadecode.numericabattleroyale.model.battle.SoldierData
 import es.niadecode.numericabattleroyale.ui.state.BattleState
+import java.awt.Point
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,9 +17,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
-import java.awt.Point
-import kotlin.math.cos
-import kotlin.math.sin
 
 const val CHUNK_SIZE = 20
 
@@ -26,6 +26,7 @@ class BattleSceneViewModel() : ViewModel() {
         MutableStateFlow<List<SoldierData>>(emptyList())
     }
     val soldiers: StateFlow<List<SoldierData>> = _soldiers
+    var participationList: List<BattleParticipation> = emptyList()
 
     //var soldiers = mutableStateListOf<SoldierData>()
     var gameState by mutableStateOf(BattleState.START)
@@ -33,7 +34,9 @@ class BattleSceneViewModel() : ViewModel() {
 
     fun startGame(battleParticipations: List<BattleParticipation>, center: Point, radius: Double) {
 
+
         println("start game")
+        participationList = battleParticipations
         _soldiers.value = emptyList()
 
         viewModelScope.launch {
@@ -108,10 +111,11 @@ class BattleSceneViewModel() : ViewModel() {
             _soldiers.value = tmpSoldiers
 
 
-            // Win condition
-            //if (soldiers.isEmpty()) {
-            //    winGame()
-            //}
+            //Win condition
+            if (_soldiers.value.distinctBy { it.name }.size == 1) {
+                endGame()
+            }
+
         }
     }
 

@@ -6,4 +6,5 @@ data class ConfigState(
     val vip: Boolean,
     val modImmunity: Boolean,
     val isConnected: Boolean,
+    val maxParticipations: Int,
 )

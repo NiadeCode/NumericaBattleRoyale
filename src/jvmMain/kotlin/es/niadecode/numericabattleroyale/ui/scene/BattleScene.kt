@@ -43,7 +43,7 @@ fun BattleScene(
         }
 
         LaunchedEffect(Unit) {
-            while (true) {
+            while (viewModel.gameState == BattleState.PLAYING) {
                 viewModel.update()
                 delay(30.milliseconds)
             }
