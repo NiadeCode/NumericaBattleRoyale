@@ -1,9 +1,9 @@
 package es.niadecode.numericabattleroyale.ui.scene
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -15,10 +15,10 @@ import es.niadecode.numericabattleroyale.ui.composable.Soldier
 import es.niadecode.numericabattleroyale.ui.state.BattleState
 import es.niadecode.numericabattleroyale.ui.viewmodel.BattleSceneViewModel
 import kotlinx.coroutines.async
-import java.awt.Point
-import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import moe.tlaster.precompose.viewmodel.viewModel
+import java.awt.Point
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun BattleScene(
@@ -50,7 +50,7 @@ fun BattleScene(
                 }
                 counter.await()
                 backToNumerica()
-            //    navigateToBattle(viewModel.battleParticipants)
+                //    navigateToBattle(viewModel.battleParticipants)
             }
             Text(toBattleText.value, color = MaterialTheme.colors.onBackground)
         }
@@ -75,19 +75,28 @@ fun BattleScene(
                 .alpha(0.3f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-
-            Button(onClick = { backToNumerica() }) {
-                Text("Volver")
-            }
-
-            Text(viewModel.gameStatus)
-
-
+            Text(
+                text = viewModel.gameStatus,
+                style = MaterialTheme.typography.h1,
+                color = MaterialTheme.colors.onBackground
+            )
         }
 
         soldiers.forEach {
             Soldier(it)
+        }
+
+        Column(
+            modifier = Modifier.align(Alignment.BottomEnd)
+                .background(MaterialTheme.colors.secondary.copy(alpha = .2f))
+        ) {
+            viewModel.participantsWidget.forEach {
+                Text(
+                    text = "${it.userName} ${it.soldiers}",
+                    style = MaterialTheme.typography.body1,
+                    color = it.color
+                )
+            }
         }
 
     }

@@ -1,43 +1,43 @@
 package es.niadecode.numericabattleroyale.model.numerica
 
-import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
-
 sealed class GameState(
     open val currentScore: Int,
     open val maxScore: Int,
     open val lastUserName: String,
-    open val lastUserNameMVP: String,
+    open val gloryUserName: String,
 ) {
 
-    object Start : GameState(0, 0, "", "")
+    data class Start(
+        override val gloryUserName: String
+    ) : GameState(0, 0, "", "")
     data class Play(
         override val currentScore: Int,
         override val maxScore: Int,
         override val lastUserName: String,
-        override val lastUserNameMVP: String
-    ) : GameState(currentScore, maxScore, lastUserName, lastUserNameMVP)
+        override val gloryUserName: String
+    ) : GameState(currentScore, maxScore, lastUserName, gloryUserName)
 
     data class GameOver(
         override val currentScore: Int,
         override val maxScore: Int,
         override val lastUserName: String,
-        override val lastUserNameMVP: String,
-    ) : GameState(currentScore, maxScore, lastUserName, lastUserNameMVP)
+        override val gloryUserName: String,
+    ) : GameState(currentScore, maxScore, lastUserName, gloryUserName)
 
 }
 
 fun GameState.mapToBo(): GameStateBo {
     return when (this) {
         is GameState.GameOver -> {
-            GameStateBo(0, maxScore, lastUserName, lastUserNameMVP)
+            GameStateBo(0, maxScore, lastUserName, gloryUserName)
         }
 
         is GameState.Play -> {
-            GameStateBo(currentScore, maxScore, lastUserName, lastUserNameMVP)
+            GameStateBo(currentScore, maxScore, lastUserName, gloryUserName)
         }
 
-        GameState.Start -> {
-            GameStateBo(0, 0, "", "")
+        is GameState.Start -> {
+            GameStateBo(0, 0, "", gloryUserName)
         }
     }
 }

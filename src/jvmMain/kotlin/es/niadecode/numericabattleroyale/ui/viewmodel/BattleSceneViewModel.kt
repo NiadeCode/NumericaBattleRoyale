@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
+import es.niadecode.numericabattleroyale.model.battle.BattleWidget
 import es.niadecode.numericabattleroyale.model.battle.SoldierData
-import es.niadecode.numericabattleroyale.model.numerica.GameState
 import es.niadecode.numericabattleroyale.repository.SettingsRepository
 import es.niadecode.numericabattleroyale.repository.TwitchApiRepository
 import es.niadecode.numericabattleroyale.ui.state.BattleState
@@ -38,10 +38,12 @@ class BattleSceneViewModel() : ViewModel() {
     //var soldiers = mutableStateListOf<SoldierData>()
   //  var gameState by mutableStateOf(BattleState.START)
 
-    private val _state = MutableStateFlow<BattleState>(BattleState.START)
+    private val _state = MutableStateFlow(BattleState.START)
     val state: StateFlow<BattleState> = _state
 
     var gameStatus by mutableStateOf("Let's play!")
+
+    var participantsWidget by mutableStateOf<List<BattleWidget>>(emptyList())
 
     fun startGame(battleParticipations: List<BattleParticipation>, center: Point, radius: Double) {
 
@@ -72,7 +74,7 @@ class BattleSceneViewModel() : ViewModel() {
                             point = point,
                             name = battleParticipation.name,
                             color = battleParticipation.color,
-                            size = 20,
+                            size = 30,
                         )
                     )
                 }
@@ -128,6 +130,16 @@ class BattleSceneViewModel() : ViewModel() {
             }
 
         }
+
+        viewModelScope.launch {
+            participantsWidget = participationList.map {participant ->
+                BattleWidget(
+                    userName = participant.name,
+                    soldiers = _soldiers.value.filter { it.name == participant.name}.size,
+                    color = participant.color
+                ) }
+
+        }
     }
 
     fun endGame() {
@@ -161,6 +173,8 @@ class BattleSceneViewModel() : ViewModel() {
             val winner = participationList.find { it.name == name }
             winner?.let {
                 apiRepository.vip(winner.userId)
+                settingsRepository.setVipUserId(winner.userId)
+                settingsRepository.setVipUserName(winner.name)
             }
         }
     }

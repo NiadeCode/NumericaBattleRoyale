@@ -29,6 +29,7 @@ class HomeSceneViewModel : ViewModel() {
                 vip = true,
                 modImmunity = false,
                 isConnected = false,
+                batleOnFail = true,
                 maxParticipations = 20,
             )
         )
@@ -52,8 +53,8 @@ class HomeSceneViewModel : ViewModel() {
         _state.value = state.value.copy(vip = vip)
     }
 
-    fun setTimeoutsMultiplier(newMultiplier: Int) {
-        _state.value = state.value.copy(timeoutMultiplier = newMultiplier)
+    fun setBattleOnFail(vip: Boolean) {
+        _state.value = state.value.copy(batleOnFail = vip)
     }
 
     fun setModImmunity(newModImmunity: Boolean) {
@@ -96,6 +97,7 @@ class HomeSceneViewModel : ViewModel() {
         settingsRepository.setVip(state.vip)
         settingsRepository.setMod(state.modImmunity)
         settingsRepository.setMaxParticipation(state.maxParticipations)
+        settingsRepository.setBattleOnFail(state.batleOnFail)
     }
 
     private fun createAutorizationUrl(port: Int): String {
@@ -121,6 +123,7 @@ class HomeSceneViewModel : ViewModel() {
                 "scope=" + scopes.joinToString("+")
         return s
     }
+
 
     fun updateTimeoutMultiplier(multiplier: Int?) {
         multiplier?.let {

@@ -23,7 +23,7 @@ class NumericaSceneViewModel() : ViewModel() {
     private val settingsRepository: SettingsRepository by lazy { SettingsRepository(createPreferences()) }
     private val chatRepository by lazy { TwitchChatRepository(viewModelScope, settingsRepository) }
 
-    private val _state = MutableStateFlow<GameState>(GameState.Start)
+    private val _state = MutableStateFlow<GameState>(GameState.Start(settingsRepository.getVipNameUser()))
     val state: StateFlow<GameState> = _state
 
     val battleParticipants = mutableListOf<BattleParticipation>()
@@ -52,6 +52,7 @@ class NumericaSceneViewModel() : ViewModel() {
     private fun onParticipationReceived(gameParticipation: GameParticipation) {
 
         val current = state.value.mapToBo()
+        //current.lastUserNameMVP = settingsRepository.getVipNameUser()
 
         if (gameParticipation.userName == current.lastUserName) {
             return //TODO uncomment to prevent participation from the same player
@@ -74,14 +75,9 @@ class NumericaSceneViewModel() : ViewModel() {
             current.currentScore++
             current.lastUserName = gameParticipation.userName
 
-            if (current.currentScore > current.maxScore) {
-                current.maxScore = current.currentScore
-                current.lastUserNameMVP = gameParticipation.userName
-            }
-
             _state.value = current.mapToVo()
         } else {
-            if (current.currentScore != 0) {
+            if (settingsRepository.getBattleOnFail() && current.currentScore != 0) {
                 _state.value = GameState.GameOver(
                     current.currentScore,
                     current.maxScore,
@@ -110,7 +106,9 @@ class NumericaSceneViewModel() : ViewModel() {
     }
 
     fun toBattleMock() {
-        _state.value = GameState.GameOver(currentScore = 5, 5, "NiadeCode", "NiadeCode")
+        val bo = _state.value.mapToBo()
+        _state.value =
+            GameState.GameOver(bo.currentScore, bo.maxScore, bo.lastUserName, settingsRepository.getVipNameUser())
         battleParticipants.addAll(getMockParticipationList())
     }
 

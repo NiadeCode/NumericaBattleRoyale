@@ -13,9 +13,11 @@ class SettingsRepository(
     private val timeoutKey = "timeout"
     private val timeoutMultiplierKey = "timeoutMultiplier"
     private val vipKey = "vip"
-    private val vipUserKey = "vipUser"
+    private val vipUserIdKey = "vipUserId"
+    private val vipUserNameKey = "vipUserName"
     private val moderatorImmunityKey = "mods"
     private val maxParticipationsKey = "maxParticipations"
+    private val battleOnFailKey = "battleOnFail"
 
     fun setToken(token: String) {
         preferences.put(tokenKey, token)
@@ -34,27 +36,35 @@ class SettingsRepository(
     }
 
     fun setBan(hasBan: Boolean) {
-        preferences.put(timeoutKey, hasBan.toString())
+        preferences.putBoolean(timeoutKey, hasBan)
     }
 
     fun setBanMultiplier(multiplier: Int) {
-        preferences.put(timeoutMultiplierKey, multiplier.toString())
+        preferences.putInt(timeoutMultiplierKey, multiplier)
     }
 
     fun setVip(hasVip: Boolean) {
-        preferences.put(vipKey, hasVip.toString())
+        preferences.putBoolean(vipKey, hasVip)
     }
 
     fun setMod(mod: Boolean) {
-        preferences.put(moderatorImmunityKey, mod.toString())
+        preferences.putBoolean(moderatorImmunityKey, mod)
     }
 
     fun setMaxParticipation(max: Int) {
-        preferences.put(maxParticipationsKey, max.toString())
+        preferences.putInt(maxParticipationsKey, max)
     }
 
-    fun setUserVip(userVip: String) {
-        preferences.put(vipUserKey, userVip)
+    fun setBattleOnFail(battleOnFail: Boolean) {
+        preferences.putBoolean(battleOnFailKey, battleOnFail)
+    }
+
+    fun setVipUserId(userVip: String) {
+        preferences.put(vipUserIdKey, userVip)
+    }
+
+    fun setVipUserName(userVip: String) {
+        preferences.put(vipUserNameKey, userVip)
     }
 
 
@@ -94,8 +104,16 @@ class SettingsRepository(
         return preferences.getInt(maxParticipationsKey, 20)
     }
 
-    fun getVipUser(): String {
-        return preferences.get(vipUserKey, "")
+    fun getVipUserId(): String {
+        return preferences.get(vipUserIdKey, "")
+    }
+
+    fun getVipNameUser(): String {
+        return preferences.get(vipUserNameKey, "")
+    }
+
+    fun getBattleOnFail(): Boolean {
+        return preferences.getBoolean(battleOnFailKey, true)
     }
 
 

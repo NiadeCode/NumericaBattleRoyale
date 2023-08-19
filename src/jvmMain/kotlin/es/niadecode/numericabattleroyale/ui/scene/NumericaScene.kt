@@ -28,10 +28,12 @@ fun NumericaScene(
 
     val state by viewModel.state.collectAsState()
 
-    IconButton(onClick = {
+    IconButton(
+        modifier = Modifier.size(30.dp),
+        onClick = {
         goBack()
     }) {
-        Icon(painter = painterResource("close_FILL0_wght400_GRAD0_opsz48.svg"), null)
+        Icon(painter = painterResource("settings_FILL1_wght400_GRAD0_opsz48.svg"), null, tint = MaterialTheme.colors.primary)
     }
 
     Column(
@@ -39,22 +41,28 @@ fun NumericaScene(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text(
-            text = "HIGH SCORE ${state.maxScore}",
-            style = MaterialTheme.typography.h1,
-            color = MaterialTheme.colors.onBackground
-        )
+//        Text(
+//            text = "HIGH SCORE ${state.maxScore}",
+//            style = MaterialTheme.typography.h1,
+//            color = MaterialTheme.colors.onBackground
+//        )
         Row {
-            if (state.lastUserNameMVP.isNotEmpty()) {
+            if (state.gloryUserName.isNotEmpty()) {
                 Text(
-                    text = "by ",
+                    text = "GLORIA A ",
                     style = MaterialTheme.typography.h1,
                     color = MaterialTheme.colors.onBackground
                 )
                 Text(
-                    text = state.lastUserNameMVP,
+                    text = state.gloryUserName,
                     style = MaterialTheme.typography.h1,
                     color = MaterialTheme.colors.primary
+                )
+            } else {
+                Text(
+                    text = "Vence en la batalla para llevarte la gloria",
+                    style = MaterialTheme.typography.h1,
+                    color = MaterialTheme.colors.onBackground
                 )
             }
         }
@@ -80,7 +88,7 @@ fun NumericaScene(
             color = MaterialTheme.colors.onBackground,
         )
 
-        Spacer(modifier = Modifier.size(24.dp))
+        Spacer(modifier = Modifier.size(10.dp))
 
         if (state is GameState.GameOver) {
             val toBattleText = remember { mutableStateOf("") }
@@ -97,17 +105,24 @@ fun NumericaScene(
                 //navigatorCallback("/battle")
                 navigateToBattle(viewModel.battleParticipants)
             }
-            Text(toBattleText.value, color = MaterialTheme.colors.onBackground)
+            Text(toBattleText.value, color = MaterialTheme.colors.onBackground, style = MaterialTheme.typography.h1)
         }
 
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+
         Button(
-            modifier = Modifier.alpha(0.5f),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .alpha(0.2f),
             onClick = {
                 viewModel.toBattleMock()
             }) {
             Text("to battle mock")
         }
-
     }
 
 }

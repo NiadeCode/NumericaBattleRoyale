@@ -154,6 +154,32 @@ fun HomeScene(navigatorCallback: (String) -> Unit) {
             )
         }
 
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.width(50.dp))
+            Checkbox(
+                modifier = Modifier.width(100.dp),
+                checked = state.batleOnFail,
+                colors = CheckboxDefaults.colors(
+                    checkedColor = MaterialTheme.colors.primary,
+                    uncheckedColor = MaterialTheme.colors.primary,
+                    checkmarkColor = MaterialTheme.colors.onPrimary,
+                ),
+
+                onCheckedChange = {
+                    viewModel.setBattleOnFail(it)
+                })
+
+            Text(
+                "Iniciar batalla al fallar un número",
+                style = MaterialTheme.typography.h3,
+                color = MaterialTheme.colors.onBackground
+            )
+
+        }
+
+
 
 
         Button(

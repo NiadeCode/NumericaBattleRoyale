@@ -78,7 +78,7 @@ class TwitchApiRepository(
 
     suspend fun vip(winnerID: String) {
         if (settingsRepository.getVip()) {
-            val unvipUser = settingsRepository.getVipUser()
+            val unvipUser = settingsRepository.getVipUserId()
             if (unvipUser.isNotEmpty()) {
                 unVip(unvipUser)
             }
@@ -90,12 +90,6 @@ class TwitchApiRepository(
                 url {
                     parameters.append("user_id", winnerID)
                     parameters.append("broadcaster_id", settingsRepository.getUserId())
-                }
-            }.also {
-                if (it?.status?.isSuccess() == true) {
-                    settingsRepository.setUserVip(winnerID)
-                } else {
-                    settingsRepository.setUserVip("")
                 }
             }
         }

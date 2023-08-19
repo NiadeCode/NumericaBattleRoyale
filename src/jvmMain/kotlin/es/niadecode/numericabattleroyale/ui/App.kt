@@ -52,7 +52,7 @@ fun App() {
 
         scene("/battle") {
             BattleScene(battleParticipations) {
-                navigator.navigate("/numerica", )
+                navigator.navigate("/numerica")
             }
         }
     }
