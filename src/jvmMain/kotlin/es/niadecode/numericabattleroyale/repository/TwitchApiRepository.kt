@@ -110,7 +110,7 @@ class TwitchApiRepository(
                 contentType(ContentType.Application.Json)
                 url {
                     parameters.append("user_id", winnerID)
-                    parameters.append("broadcaster_id", settingsRepository.getClientID())
+                    parameters.append("broadcaster_id", settingsRepository.getUserId())
                 }
             }
         }
