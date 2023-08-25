@@ -59,9 +59,9 @@ compose.desktop {
     application {
         mainClass = "MainKt"
         nativeDistributions {
-            targetFormats(TargetFormat.Exe)
+            targetFormats(TargetFormat.Exe, TargetFormat.Msi)
             packageName = "NumericaBattleRoyale"
-            packageVersion = "1.0.0"
+            packageVersion = "1.2.0"
         }
     }
 }
