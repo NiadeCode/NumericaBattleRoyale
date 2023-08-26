@@ -10,14 +10,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import es.niadecode.numericabattleroyale.repository.SettingsRepository
 import es.niadecode.numericabattleroyale.ui.viewmodel.HomeSceneViewModel
 import moe.tlaster.precompose.viewmodel.viewModel
 
 @Composable
-fun HomeScene(navigatorCallback: (String) -> Unit) {
+fun HomeScene(
+    settingsRepository: SettingsRepository,
+    navigatorCallback: (String) -> Unit
+) {
 
     val viewModel = viewModel(modelClass = HomeSceneViewModel::class, keys = listOf(null)) {
-        HomeSceneViewModel()
+        HomeSceneViewModel(settingsRepository)
     }
 
     val state by viewModel.state.collectAsState()

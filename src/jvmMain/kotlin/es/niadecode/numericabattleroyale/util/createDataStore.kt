@@ -14,4 +14,4 @@ fun createPreferences(): Preferences =
             preferences!!
         }
 
-internal const val dataStoreFileName = "numerica_battle_royale.preferences_pb"
+internal const val dataStoreFileName = "numerica_battle_royale"

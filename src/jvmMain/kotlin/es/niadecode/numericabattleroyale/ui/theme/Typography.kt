@@ -38,7 +38,7 @@ val Typography = Typography(
     body1 = TextStyle(
         fontFamily = piedra,
         fontWeight = FontWeight.Normal,
-        fontSize = 18.sp,
+        fontSize = 26.sp,
     ),
 
     body2 = TextStyle(

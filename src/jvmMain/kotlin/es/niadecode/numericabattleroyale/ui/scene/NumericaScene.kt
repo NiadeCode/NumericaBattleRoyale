@@ -1,5 +1,6 @@
 package es.niadecode.numericabattleroyale.ui.scene
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -10,6 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
 import es.niadecode.numericabattleroyale.model.numerica.GameState
+import es.niadecode.numericabattleroyale.repository.SettingsRepository
 import es.niadecode.numericabattleroyale.ui.viewmodel.NumericaSceneViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -18,11 +20,12 @@ import moe.tlaster.precompose.viewmodel.viewModel
 
 @Composable
 fun NumericaScene(
+    settingsRepository: SettingsRepository,
     goBack: () -> Unit,
     navigateToBattle: (List<BattleParticipation>) -> Unit
 ) {
     val viewModel = viewModel(modelClass = NumericaSceneViewModel::class, keys = listOf(null)) {
-        NumericaSceneViewModel()
+        NumericaSceneViewModel(settingsRepository)
     }
 
 
@@ -31,21 +34,19 @@ fun NumericaScene(
     IconButton(
         modifier = Modifier.size(30.dp),
         onClick = {
-        goBack()
-    }) {
-        Icon(painter = painterResource("settings_FILL1_wght400_GRAD0_opsz48.svg"), null, tint = MaterialTheme.colors.primary)
+            goBack()
+        }) {
+        Icon(
+            painter = painterResource("settings_FILL1_wght400_GRAD0_opsz48.svg"),
+            null,
+            tint = MaterialTheme.colors.primary
+        )
     }
 
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-//        Text(
-//            text = "HIGH SCORE ${state.maxScore}",
-//            style = MaterialTheme.typography.h1,
-//            color = MaterialTheme.colors.onBackground
-//        )
         Row {
             if (state.gloryUserName.isNotEmpty()) {
                 Text(
@@ -88,7 +89,7 @@ fun NumericaScene(
             color = MaterialTheme.colors.onBackground,
         )
 
-        Spacer(modifier = Modifier.size(10.dp))
+        Spacer(modifier = Modifier.size(5.dp))
 
         if (state is GameState.GameOver) {
             val toBattleText = remember { mutableStateOf("") }
@@ -102,7 +103,6 @@ fun NumericaScene(
                     }
                 }
                 counter.await()
-                //navigatorCallback("/battle")
                 navigateToBattle(viewModel.battleParticipants)
             }
             Text(toBattleText.value, color = MaterialTheme.colors.onBackground, style = MaterialTheme.typography.h1)
@@ -116,13 +116,27 @@ fun NumericaScene(
 
         Button(
             modifier = Modifier
-                .align(Alignment.BottomEnd)
+                .align(Alignment.BottomStart)
                 .alpha(0.2f),
             onClick = {
                 viewModel.toBattleMock()
             }) {
             Text("to battle mock")
         }
+
+        Column(
+            modifier = Modifier.align(Alignment.BottomEnd)
+                .background(MaterialTheme.colors.secondary.copy(alpha = .2f))
+        ) {
+            viewModel.battleParticipants.forEach {
+                Text(
+                    text = "${it.name} ${it.soldiers}",
+                    style = MaterialTheme.typography.body1,
+                    color = it.color
+                )
+            }
+        }
+
     }
 
 }

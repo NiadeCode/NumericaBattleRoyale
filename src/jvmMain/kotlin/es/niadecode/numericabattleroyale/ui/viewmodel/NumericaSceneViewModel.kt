@@ -9,21 +9,23 @@ import es.niadecode.numericabattleroyale.model.numerica.mapToBo
 import es.niadecode.numericabattleroyale.model.numerica.mapToVo
 import es.niadecode.numericabattleroyale.repository.SettingsRepository
 import es.niadecode.numericabattleroyale.repository.TwitchChatRepository
-import es.niadecode.numericabattleroyale.util.createPreferences
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 
-class NumericaSceneViewModel() : ViewModel() {
+class NumericaSceneViewModel(val settingsRepository: SettingsRepository) : ViewModel() {
 
-    private val settingsRepository: SettingsRepository by lazy { SettingsRepository(createPreferences()) }
     private val chatRepository by lazy { TwitchChatRepository(viewModelScope, settingsRepository) }
 
-    private val _state = MutableStateFlow<GameState>(GameState.Start(settingsRepository.getVipNameUser()))
+    private val _state by lazy {
+        val user = runBlocking { settingsRepository.getVipNameUser() }
+        MutableStateFlow<GameState>(GameState.Start(user))
+    }
     val state: StateFlow<GameState> = _state
 
     val battleParticipants = mutableListOf<BattleParticipation>()
@@ -52,10 +54,9 @@ class NumericaSceneViewModel() : ViewModel() {
     private fun onParticipationReceived(gameParticipation: GameParticipation) {
 
         val current = state.value.mapToBo()
-        //current.lastUserNameMVP = settingsRepository.getVipNameUser()
 
         if (gameParticipation.userName == current.lastUserName) {
-            return //TODO uncomment to prevent participation from the same player
+//            return //TODO uncomment to prevent participation from the same player
         }
 
         if (gameParticipation.number > settingsRepository.getmaxParticipation()) {
@@ -77,7 +78,10 @@ class NumericaSceneViewModel() : ViewModel() {
 
             _state.value = current.mapToVo()
         } else {
-            if (settingsRepository.getBattleOnFail() && current.currentScore != 0) {
+            if (settingsRepository.getBattleOnFail()
+                && current.currentScore != 0
+                && battleParticipants.size > 1
+            ) {
                 _state.value = GameState.GameOver(
                     current.currentScore,
                     current.maxScore,

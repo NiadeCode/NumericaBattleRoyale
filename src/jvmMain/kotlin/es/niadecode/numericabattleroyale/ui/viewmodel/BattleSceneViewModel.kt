@@ -24,9 +24,8 @@ import kotlin.math.sin
 
 const val CHUNK_SIZE = 20
 
-class BattleSceneViewModel() : ViewModel() {
+class BattleSceneViewModel(val settingsRepository: SettingsRepository) : ViewModel() {
 
-    private val settingsRepository: SettingsRepository by lazy { SettingsRepository(createPreferences()) }
     private val apiRepository by lazy { TwitchApiRepository(viewModelScope, settingsRepository) }
 
     private val _soldiers by lazy {
@@ -34,9 +33,6 @@ class BattleSceneViewModel() : ViewModel() {
     }
     val soldiers: StateFlow<List<SoldierData>> = _soldiers
     var participationList: List<BattleParticipation> = emptyList()
-
-    //var soldiers = mutableStateListOf<SoldierData>()
-  //  var gameState by mutableStateOf(BattleState.START)
 
     private val _state = MutableStateFlow(BattleState.START)
     val state: StateFlow<BattleState> = _state
@@ -132,13 +128,13 @@ class BattleSceneViewModel() : ViewModel() {
         }
 
         viewModelScope.launch {
-            participantsWidget = participationList.map {participant ->
+            participantsWidget = participationList.map { participant ->
                 BattleWidget(
                     userName = participant.name,
-                    soldiers = _soldiers.value.filter { it.name == participant.name}.size,
+                    soldiers = _soldiers.value.filter { it.name == participant.name }.size,
                     color = participant.color
-                ) }
-
+                )
+            }
         }
     }
 

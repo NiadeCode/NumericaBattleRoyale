@@ -5,7 +5,6 @@ import es.niadecode.numericabattleroyale.repository.SettingsRepository
 import es.niadecode.numericabattleroyale.repository.TwitchApiRepository
 import es.niadecode.numericabattleroyale.repository.TwitchLoginRepository
 import es.niadecode.numericabattleroyale.repository.twitchAuthUrl
-import es.niadecode.numericabattleroyale.util.createPreferences
 import es.niadecode.numericabattleroyale.util.openWebpage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,22 +14,21 @@ import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import java.util.*
 
-class HomeSceneViewModel : ViewModel() {
+class HomeSceneViewModel(val settingsRepository: SettingsRepository) : ViewModel() {
 
-    private val settingsRepository: SettingsRepository by lazy { SettingsRepository(createPreferences()) }
     private val apiRepository by lazy { TwitchApiRepository(viewModelScope, settingsRepository) }
     private val loginRepository by lazy { TwitchLoginRepository(viewModelScope, settingsRepository) }
 
     private val _state by lazy {
         MutableStateFlow(
             ConfigState(
-                timeout = true,
-                timeoutMultiplier = 2,
-                vip = true,
-                modImmunity = false,
+                timeout = settingsRepository.getBan(),
+                timeoutMultiplier = settingsRepository.getBanMultiplier(),
+                vip = settingsRepository.getVip(),
+                modImmunity = settingsRepository.getModsImmunity(),
                 isConnected = false,
-                batleOnFail = true,
-                maxParticipations = 20,
+                batleOnFail = settingsRepository.getBattleOnFail(),
+                maxParticipations = settingsRepository.getmaxParticipation(),
             )
         )
     }
@@ -91,13 +89,15 @@ class HomeSceneViewModel : ViewModel() {
     }
 
     private fun saveSettings() {
-        val state = state.value
-        settingsRepository.setBan(state.timeout)
-        settingsRepository.setBanMultiplier(state.timeoutMultiplier)
-        settingsRepository.setVip(state.vip)
-        settingsRepository.setMod(state.modImmunity)
-        settingsRepository.setMaxParticipation(state.maxParticipations)
-        settingsRepository.setBattleOnFail(state.batleOnFail)
+        viewModelScope.launch {
+            val state = state.value
+            settingsRepository.setBan(state.timeout)
+            settingsRepository.setBanMultiplier(state.timeoutMultiplier)
+            settingsRepository.setVip(state.vip)
+            settingsRepository.setMod(state.modImmunity)
+            settingsRepository.setMaxParticipation(state.maxParticipations)
+            settingsRepository.setBattleOnFail(state.batleOnFail)
+        }
     }
 
     private fun createAutorizationUrl(port: Int): String {

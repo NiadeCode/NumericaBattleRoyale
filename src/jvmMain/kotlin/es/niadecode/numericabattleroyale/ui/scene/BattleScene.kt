@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import es.niadecode.numericabattleroyale.model.battle.BattleParticipation
+import es.niadecode.numericabattleroyale.repository.SettingsRepository
 import es.niadecode.numericabattleroyale.ui.composable.Soldier
 import es.niadecode.numericabattleroyale.ui.state.BattleState
 import es.niadecode.numericabattleroyale.ui.viewmodel.BattleSceneViewModel
@@ -22,12 +23,13 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun BattleScene(
+    settingsRepository: SettingsRepository,
     participations: List<BattleParticipation>,
     backToNumerica: () -> Unit
 ) {
 
     val viewModel = viewModel(modelClass = BattleSceneViewModel::class, keys = listOf(null)) {
-        BattleSceneViewModel()
+        BattleSceneViewModel(settingsRepository)
     }
 
     Box(
@@ -50,12 +52,15 @@ fun BattleScene(
                 }
                 counter.await()
                 backToNumerica()
-                //    navigateToBattle(viewModel.battleParticipants)
             }
-            Text(toBattleText.value, color = MaterialTheme.colors.onBackground)
+            Text(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                text = toBattleText.value,
+                color = MaterialTheme.colors.onBackground,
+                style = MaterialTheme.typography.body1
+            )
         }
 
-//    val state by viewModel.state.collectAsState()
 
         if (state.value == BattleState.START) {
             viewModel.startGame(participations, Point(256, 256), 180.0)
