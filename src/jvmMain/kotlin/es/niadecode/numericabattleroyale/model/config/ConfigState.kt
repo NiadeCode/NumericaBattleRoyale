@@ -7,5 +7,6 @@ data class ConfigState(
     val modImmunity: Boolean,
     val isConnected: Boolean,
     val batleOnFail: Boolean,
+    val trolls: Boolean,
     val maxParticipations: Int,
 )

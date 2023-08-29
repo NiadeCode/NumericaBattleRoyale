@@ -5,6 +5,7 @@ import com.gikk.twirk.events.TwirkListener
 import com.gikk.twirk.types.twitchMessage.TwitchMessage
 import com.gikk.twirk.types.users.TwitchUser
 import es.niadecode.numericabattleroyale.model.numerica.GameParticipation
+import es.niadecode.numericabattleroyale.trollCombinations
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -46,15 +47,23 @@ class TwitchChatRepository(
     }
 
     private fun onTwitchMessageReceived(userName: String, message: String, userId: String, mod: Boolean) {
+
+        if (message in trollCombinations) {
+            externalScope.launch {
+                _participationFlow.emit(GameParticipation(userName, 1, userId, mod, true))
+            }
+        }
+
+
         try {
             val number = Integer.parseInt(message)
             externalScope.launch {
-                _participationFlow.emit(GameParticipation(userName, number, userId, mod))
+                _participationFlow.emit(GameParticipation(userName, number, userId, mod, false))
             }
-
         } catch (e: NumberFormatException) {
             return
         }
+
 
     }
 

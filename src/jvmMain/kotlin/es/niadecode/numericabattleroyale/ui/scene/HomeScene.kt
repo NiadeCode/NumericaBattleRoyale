@@ -184,6 +184,33 @@ fun HomeScene(
         }
 
 
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.width(50.dp))
+            Checkbox(
+                enabled = state.batleOnFail,
+                modifier = Modifier.width(100.dp),
+                checked = state.trolls,
+                colors = CheckboxDefaults.colors(
+                    checkedColor = MaterialTheme.colors.primary,
+                    uncheckedColor = MaterialTheme.colors.primary,
+                    checkmarkColor = MaterialTheme.colors.onPrimary,
+                ),
+
+                onCheckedChange = {
+                    viewModel.setTrolls(it)
+                })
+
+            Text(
+                "Los troles sufren",
+                style = MaterialTheme.typography.h3,
+                color = MaterialTheme.colors.onBackground
+            )
+
+        }
+
+
 
 
         Button(

@@ -19,10 +19,9 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import java.awt.Point
+import java.lang.Math.random
 import kotlin.math.cos
 import kotlin.math.sin
-
-const val CHUNK_SIZE = 20
 
 class BattleSceneViewModel(val settingsRepository: SettingsRepository) : ViewModel() {
 
@@ -92,7 +91,6 @@ class BattleSceneViewModel(val settingsRepository: SettingsRepository) : ViewMod
                 if (currentSoldier.objetive.isNotEmpty() && objetive != null) {
                     currentSoldier.update(objetive)
                 } else {
-
                     soldiers.value
                         .filter { it.isEnemy(currentSoldier) }
                         .map { soldierData ->
@@ -106,6 +104,7 @@ class BattleSceneViewModel(val settingsRepository: SettingsRepository) : ViewMod
                         } ?: run { currentSoldier }
                 }
             }
+
             val tmpSoldiers = soldiers.value.toMutableList()
             soldiers.value.shuffled().forEach { currentSoldier ->
                 if (tmpSoldiers.isNotEmpty() && tmpSoldiers.contains(currentSoldier)) {
@@ -128,24 +127,26 @@ class BattleSceneViewModel(val settingsRepository: SettingsRepository) : ViewMod
         }
 
         viewModelScope.launch {
-            participantsWidget = participationList.map { participant ->
-                BattleWidget(
-                    userName = participant.name,
-                    soldiers = _soldiers.value.filter { it.name == participant.name }.size,
-                    color = participant.color
-                )
-            }
+            participantsWidget = participationList
+                .mapNotNull { participant ->
+                    val soldiers = _soldiers.value.filter { it.name == participant.name }.size
+                    if (soldiers > 0) {
+                        BattleWidget(
+                            userName = participant.name,
+                            soldiers = soldiers,
+                            color = participant.color
+                        )
+                    } else null
+                }
+                .sortedByDescending { it.soldiers }
+                .take(10)
         }
     }
 
     fun endGame() {
-        //    gameObjects.remove(ship)
         _state.value = BattleState.GLORY
-
         gameStatus = "GLORY TO ${_soldiers.value.distinctBy { it.name }.first().name}!"
-
         distributePrizes(_soldiers.value.distinctBy { it.name }.first().name)
-
     }
 
     private fun distributePrizes(name: String) {
@@ -187,6 +188,22 @@ class BattleSceneViewModel(val settingsRepository: SettingsRepository) : ViewMod
             println(radius)
         }
         return spawnpoints
+    }
+
+    fun getSoldiersPoints(points: Int, center: Point): List<Point> {
+        val level = 5
+        val slice: Double = 2 * level * kotlin.math.PI / points
+        val spawnpoints = mutableStateListOf<Point>()
+        for (currentLevel in 0 until level) {
+            val subradio = 100 * (currentLevel + 1) / level
+            for (i in 0 until points / level) {
+                val angle = slice * i + (level * (0..500).random())
+                val newX = (center.x + subradio * cos(angle)).toInt()
+                val newY = (center.y + subradio * sin(angle)).toInt()
+                spawnpoints.add(Point(newX, newY))
+            }
+        }
+        return spawnpoints.take(points)
     }
 
 }

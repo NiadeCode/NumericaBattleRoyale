@@ -18,6 +18,7 @@ class SettingsRepository(
     private val moderatorImmunityKey = "mods"
     private val maxParticipationsKey = "maxParticipations"
     private val battleOnFailKey = "battleOnFail"
+    private val trollsKey = "trolls"
 
     fun setToken(token: String) {
         preferences.put(tokenKey, token)
@@ -57,6 +58,10 @@ class SettingsRepository(
 
     fun setBattleOnFail(battleOnFail: Boolean) {
         preferences.putBoolean(battleOnFailKey, battleOnFail)
+    }
+
+    fun setTrolls(trolls: Boolean) {
+        preferences.putBoolean(trollsKey, trolls)
     }
 
     fun setVipUserId(userVip: String) {
@@ -114,6 +119,10 @@ class SettingsRepository(
 
     fun getBattleOnFail(): Boolean {
         return preferences.getBoolean(battleOnFailKey, true)
+    }
+
+    fun getTrolls(): Boolean {
+        return preferences.getBoolean(trollsKey, true)
     }
 
 

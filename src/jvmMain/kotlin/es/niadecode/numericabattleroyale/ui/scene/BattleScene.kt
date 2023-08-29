@@ -76,8 +76,7 @@ fun BattleScene(
         val soldiers by viewModel.soldiers.collectAsState()
 
         Column(
-            modifier = Modifier.fillMaxSize()
-                .alpha(0.3f),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -97,6 +96,7 @@ fun BattleScene(
         ) {
             viewModel.participantsWidget.forEach {
                 Text(
+                    modifier = Modifier.alpha(.8f),
                     text = "${it.userName} ${it.soldiers}",
                     style = MaterialTheme.typography.body1,
                     color = it.color

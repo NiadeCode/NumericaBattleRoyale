@@ -28,7 +28,12 @@ class NumericaSceneViewModel(val settingsRepository: SettingsRepository) : ViewM
     }
     val state: StateFlow<GameState> = _state
 
-    val battleParticipants = mutableListOf<BattleParticipation>()
+    private val _participantsState by lazy {
+        MutableStateFlow<List<BattleParticipation>>(listOf())
+    }
+    val participantsState: StateFlow<List<BattleParticipation>> = _participantsState
+
+//    val battleParticipants = mutableListOf<BattleParticipation>()
 
     override fun onCleared() {
         chatRepository.close()
@@ -51,7 +56,7 @@ class NumericaSceneViewModel(val settingsRepository: SettingsRepository) : ViewM
     }
 
 
-    private fun onParticipationReceived(gameParticipation: GameParticipation) {
+    private suspend fun onParticipationReceived(gameParticipation: GameParticipation) {
 
         val current = state.value.mapToBo()
 
@@ -59,28 +64,41 @@ class NumericaSceneViewModel(val settingsRepository: SettingsRepository) : ViewM
 //            return //TODO uncomment to prevent participation from the same player
         }
 
-        if (gameParticipation.number > settingsRepository.getmaxParticipation()) {
-            _state.value = GameState.GameOver(
-                current.currentScore,
-                current.maxScore,
-                current.lastUserName,
-                current.lastUserNameMVP
-            )
+        if (gameParticipation.isTroll) {
+            addTroll(gameParticipation)
             return
         }
 
         if (gameParticipation.number == current.currentScore + 1) {
+
 
             addBattleParticipation(gameParticipation)
 
             current.currentScore++
             current.lastUserName = gameParticipation.userName
 
+            if (gameParticipation.number >= settingsRepository.getmaxParticipation()) {
+                _state.value = GameState.GameOver(
+                    current.currentScore,
+                    current.maxScore,
+                    current.lastUserName,
+                    current.lastUserNameMVP
+                )
+                return
+            }
+
             _state.value = current.mapToVo()
+        } else if (
+            settingsRepository.getBattleOnFail()
+            && settingsRepository.getTrolls()
+            && gameParticipation.number
+            !in current.currentScore - 1..current.currentScore + 2
+        ) {
+            addTroll(gameParticipation.copy(number = 1))
         } else {
             if (settingsRepository.getBattleOnFail()
                 && current.currentScore != 0
-                && battleParticipants.size > 1
+                && participantsState.value.size > 1
             ) {
                 _state.value = GameState.GameOver(
                     current.currentScore,
@@ -92,28 +110,73 @@ class NumericaSceneViewModel(val settingsRepository: SettingsRepository) : ViewM
         }
     }
 
-    private fun addBattleParticipation(gameParticipation: GameParticipation) {
-        val battleParticipation = battleParticipants.find { it.name == gameParticipation.userName }
-        if (battleParticipation != null) {
-            battleParticipation.soldiers += gameParticipation.number
+    private suspend fun addBattleParticipation(gameParticipation: GameParticipation) {
+
+        if (participantsState.value.find { it.name == gameParticipation.userName } != null) {
+
+            val newList = participantsState.value.map {
+                if (it.name == gameParticipation.userName) {
+                    it.copy(soldiers = it.soldiers + gameParticipation.number)
+                } else {
+                    it
+                }
+            }
+            _participantsState.emit(newList)
         } else {
-            battleParticipants.add(
+
+            val newList = participantsState.value.toMutableList()
+            newList.add(
                 BattleParticipation(
                     gameParticipation.userName,
                     gameParticipation.userId,
                     gameParticipation.mod,
-                    BattleColors[battleParticipants.size],
+                    BattleColors[participantsState.value.size % BattleColors.size],
                     gameParticipation.number
                 )
             )
+
+            _participantsState.emit(newList)
+        }
+    }
+
+    private suspend fun addTroll(gameParticipation: GameParticipation) {
+
+        if (participantsState.value.find { it.name == gameParticipation.userName } != null) {
+
+            val newList = participantsState.value.map {
+                if (it.name == gameParticipation.userName) {
+                    it.copy(soldiers = gameParticipation.number)
+                } else {
+                    it
+                }
+            }
+            _participantsState.emit(newList)
+        } else {
+
+            val newList = participantsState.value.toMutableList()
+            newList.add(
+                BattleParticipation(
+                    gameParticipation.userName,
+                    gameParticipation.userId,
+                    gameParticipation.mod,
+                    BattleColors[participantsState.value.size % BattleColors.size],
+                    gameParticipation.number
+                )
+            )
+
+            _participantsState.emit(newList)
         }
     }
 
     fun toBattleMock() {
-        val bo = _state.value.mapToBo()
-        _state.value =
-            GameState.GameOver(bo.currentScore, bo.maxScore, bo.lastUserName, settingsRepository.getVipNameUser())
-        battleParticipants.addAll(getMockParticipationList())
+        viewModelScope.launch {
+            val bo = _state.value.mapToBo()
+            _state.value =
+                GameState.GameOver(bo.currentScore, bo.maxScore, bo.lastUserName, settingsRepository.getVipNameUser())
+            _participantsState.emit(
+                getMockParticipationList()
+            )
+        }
     }
 
 

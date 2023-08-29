@@ -24,6 +24,23 @@ fun getMockParticipationList(): List<BattleParticipation> {
         BattleParticipation("AlgebroDev", "null", false, BattleColors[8], 18),
         BattleParticipation("Demiterra", "null", false, BattleColors[9], 19),
         BattleParticipation("CapitanYelmo", "null", false, BattleColors[10], 20),
+        BattleParticipation("mecadiego112", "null", false, BattleColors[11], 21),
+        BattleParticipation("neusR", "null", false, BattleColors[12], 22),
+        BattleParticipation("pello", "null", false, BattleColors[13], 23),
+        BattleParticipation("pepeCoral", "null", false, BattleColors[14], 24),
+        BattleParticipation("RoyNewo", "null", false, BattleColors[15], 25),
+        BattleParticipation("NekeRafa", "null", false, BattleColors[16], 26),
+        BattleParticipation("ManzDev", "null", false, BattleColors[17], 27),
+        BattleParticipation("afor_digital", "null", false, BattleColors[18], 28),
+        BattleParticipation("bruno", "null", false, BattleColors[19], 28),
+        BattleParticipation("seyacat", "null", false, BattleColors[20], 28),
+        BattleParticipation("cakuDev", "null", false, BattleColors[21], 28),
+        BattleParticipation("MysteriousHat", "null", false, BattleColors[22], 28),
+        BattleParticipation("joeMancera", "null", false, BattleColors[23], 28),
+
+
+
+
     )
 }
 
@@ -38,7 +55,7 @@ val BattleColors = listOf(
 //    Color(0xFFEFDECD),
     Color(0xFF9F2B68),
     Color(0xFFF19CBB),
-    Color(0xFFAB274F),
+//    Color(0xFFAB274F),
     Color(0xFF3B7A57),
     Color(0xFFFFBF00),
     Color(0xFF9966CC),
@@ -47,7 +64,14 @@ val BattleColors = listOf(
     Color(0xFF665D1E),
     Color(0xFF915C83),
     Color(0xFF841B2D),
-    Color(0xFFFAEBD7),
+//    Color(0xFFFAEBD7),
     Color(0xFFFBCEB1),
     Color(0xFF00FFFF),
+    Color(0xFF58427C),
+    Color(0xFFFFD300),
+    Color(0xFFF56FA1),
+    Color(0xFF654321),
+    Color(0xFF5D3954),
+    Color(0xFF008B8B),
+    Color(0xFF006400),
 )

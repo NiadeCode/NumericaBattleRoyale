@@ -28,8 +28,9 @@ fun NumericaScene(
         NumericaSceneViewModel(settingsRepository)
     }
 
-
     val state by viewModel.state.collectAsState()
+    val participationState by viewModel.participantsState.collectAsState()
+
 
     IconButton(
         modifier = Modifier.size(30.dp),
@@ -103,7 +104,7 @@ fun NumericaScene(
                     }
                 }
                 counter.await()
-                navigateToBattle(viewModel.battleParticipants)
+                navigateToBattle(participationState)
             }
             Text(toBattleText.value, color = MaterialTheme.colors.onBackground, style = MaterialTheme.typography.h1)
         }
@@ -128,13 +129,17 @@ fun NumericaScene(
             modifier = Modifier.align(Alignment.BottomEnd)
                 .background(MaterialTheme.colors.secondary.copy(alpha = .2f))
         ) {
-            viewModel.battleParticipants.forEach {
-                Text(
-                    text = "${it.name} ${it.soldiers}",
-                    style = MaterialTheme.typography.body1,
-                    color = it.color
-                )
-            }
+            participationState
+                .sortedByDescending { it.soldiers }
+                .take(10)
+                .forEach {
+                    Text(
+                        modifier = Modifier.alpha(.8f),
+                        text = "${it.name} ${it.soldiers}",
+                        style = MaterialTheme.typography.body1,
+                        color = it.color
+                    )
+                }
         }
 
     }

@@ -28,6 +28,7 @@ class HomeSceneViewModel(val settingsRepository: SettingsRepository) : ViewModel
                 modImmunity = settingsRepository.getModsImmunity(),
                 isConnected = false,
                 batleOnFail = settingsRepository.getBattleOnFail(),
+                trolls = settingsRepository.getTrolls(), //TERMINAR TROLLS SUFREN
                 maxParticipations = settingsRepository.getmaxParticipation(),
             )
         )
@@ -51,8 +52,12 @@ class HomeSceneViewModel(val settingsRepository: SettingsRepository) : ViewModel
         _state.value = state.value.copy(vip = vip)
     }
 
-    fun setBattleOnFail(vip: Boolean) {
-        _state.value = state.value.copy(batleOnFail = vip)
+    fun setBattleOnFail(battleOnFail: Boolean) {
+        _state.value = state.value.copy(batleOnFail = battleOnFail)
+    }
+
+    fun setTrolls(trolls: Boolean) {
+        _state.value = state.value.copy(trolls = trolls)
     }
 
     fun setModImmunity(newModImmunity: Boolean) {
@@ -97,6 +102,7 @@ class HomeSceneViewModel(val settingsRepository: SettingsRepository) : ViewModel
             settingsRepository.setMod(state.modImmunity)
             settingsRepository.setMaxParticipation(state.maxParticipations)
             settingsRepository.setBattleOnFail(state.batleOnFail)
+            settingsRepository.setTrolls(state.trolls)
         }
     }
 
