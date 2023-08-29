@@ -37,6 +37,7 @@ private val greenPalete = lightColors(
     onBackground = RichBlack,
     onSecondary = Viridian,
     onSurface = MintCream,
+    error = Amaranth,
 )
 
 @Composable

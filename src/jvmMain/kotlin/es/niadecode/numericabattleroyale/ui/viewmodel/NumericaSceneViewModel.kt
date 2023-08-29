@@ -33,6 +33,11 @@ class NumericaSceneViewModel(val settingsRepository: SettingsRepository) : ViewM
     }
     val participantsState: StateFlow<List<BattleParticipation>> = _participantsState
 
+    private val _trollState by lazy {
+        MutableStateFlow("")
+    }
+    val trollState: StateFlow<String> = _trollState
+
 //    val battleParticipants = mutableListOf<BattleParticipation>()
 
     override fun onCleared() {
@@ -151,6 +156,7 @@ class NumericaSceneViewModel(val settingsRepository: SettingsRepository) : ViewM
                 }
             }
             _participantsState.emit(newList)
+            _trollState.emit(gameParticipation.userName)
         } else {
 
             val newList = participantsState.value.toMutableList()
@@ -177,6 +183,10 @@ class NumericaSceneViewModel(val settingsRepository: SettingsRepository) : ViewM
                 getMockParticipationList()
             )
         }
+    }
+
+    fun clearTroll() {
+        _trollState.value = ""
     }
 
 

@@ -30,6 +30,7 @@ fun NumericaScene(
 
     val state by viewModel.state.collectAsState()
     val participationState by viewModel.participantsState.collectAsState()
+    val trollState by viewModel.trollState.collectAsState()
 
 
     IconButton(
@@ -62,7 +63,7 @@ fun NumericaScene(
                 )
             } else {
                 Text(
-                    text = "Vence en la batalla para llevarte la gloria",
+                    text = "",
                     style = MaterialTheme.typography.h1,
                     color = MaterialTheme.colors.onBackground
                 )
@@ -114,6 +115,29 @@ fun NumericaScene(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
+
+        if (trollState.isNotEmpty()) {
+            val trollText = remember { mutableStateOf("") }
+            LaunchedEffect(null) {
+                var i = 3
+                val counter = async {
+                    while (i != 0) {
+                        trollText.value = "no trolees $trollState"
+                        delay(1000)
+                        i--
+                    }
+                    viewModel.clearTroll()
+                }
+                counter.await()
+            }
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = trollText.value,
+                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.h1
+            )
+        }
+
 
         Button(
             modifier = Modifier
